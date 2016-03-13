@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.rs;
+package ru.ilb.common.jaxrs.converters.uuid;
 
-import java.util.Date;
+import java.util.UUID;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class TimeAdapter extends XmlAdapter<String, Date> {
+/**
+ *
+ * @author slavb
+ */
+public class UUIDXmlAdapter extends XmlAdapter<String, UUID> {
 
     @Override
-    public Date unmarshal(String value) {
-        if (value != null && !value.equals("")) {
-            return (ru.ilb.common.rs.DateConverter.parseDateTime(value));
-        } else {
-            return null;
-        }
+    public UUID unmarshal(String vt) throws Exception {
+        return UUIDConverter.fromString(vt);
     }
 
     @Override
-    public String marshal(Date value) {
-        return (ru.ilb.common.rs.DateConverter.printTime(value));
+    public String marshal(UUID bt) throws Exception {
+        return UUIDConverter.toString(bt);
     }
 
 }
