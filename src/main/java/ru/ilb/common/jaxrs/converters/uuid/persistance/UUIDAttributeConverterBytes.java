@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.jpa;
+package ru.ilb.common.jaxrs.converters.uuid.persistance;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
@@ -25,7 +25,7 @@ import javax.persistence.Converter;
  * @author slavb
  */
 @Converter
-public class UUIDConverterBytes implements AttributeConverter<UUID, byte[]> {
+public class UUIDAttributeConverterBytes implements AttributeConverter<UUID, byte[]> {
 
     @Override
     public byte[] convertToDatabaseColumn(UUID uuid) {

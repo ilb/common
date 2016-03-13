@@ -13,40 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.rs;
+package ru.ilb.common.jaxrs.converters.date;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.UUID;
+import java.util.Date;
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
 
 /**
- *
  * @author slavb
  */
 @Provider
-public class UUIDConverterProvider implements ParamConverterProvider {
+public class DateParamConverterProvider implements ParamConverterProvider {
 
-    private static class UUIDParamConverter implements ParamConverter<UUID> {
+    private static class DateParamConverter implements ParamConverter<Date> {
+
         @Override
-        public UUID fromString(String s) {
-            return UUIDConverter.parseUUID(s);
+        public Date fromString(String s) {
+            return DateConverter.fromString(s);
         }
 
         @Override
-        public String toString(UUID arg0) {
-            return UUIDConverter.printUUID(arg0);
+        public String toString(Date arg0) {
+            return DateConverter.toString(arg0);
+
         }
     }
 
     @Override
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
-        if (rawType == UUID.class) {
-            return (ParamConverter<T>) new UUIDParamConverter();
+        if (rawType == Date.class) {
+            return (ParamConverter<T>) new DateParamConverter();
         }
-
         return null;
     }
 
