@@ -13,25 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.rs;
+package ru.ilb.common.jaxrs.converters.uuid.persistance;
 
-import java.util.Date;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.UUID;
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
-public class DateTimeAdapter extends XmlAdapter<String, Date> {
+/**
+ *
+ * @author rusanov
+ */
+@Converter
+public class UUIDAttributeConverterString implements AttributeConverter<UUID, String> {
 
     @Override
-    public Date unmarshal(String value) {
-        if (value != null && !value.equals("")) {
-            return (ru.ilb.common.rs.DateConverter.parseDateTime(value));
-        } else {
+    public String convertToDatabaseColumn(UUID uuid) {
+        if(uuid == null){
             return null;
         }
+        return uuid.toString().toUpperCase();
     }
 
     @Override
-    public String marshal(Date value) {
-        return (ru.ilb.common.rs.DateConverter.printDateTime(value));
+    public UUID convertToEntityAttribute(String uuid) {
+        if(uuid == null || uuid.length() == 0){
+            return null;
+        }
+        return UUID.fromString(uuid);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Bystrobank.
+ * Copyright 2016 Bystrobank
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.rs;
+package ru.ilb.common.jaxrs.converters.uuid;
 
 import java.io.IOException;
 import java.io.InputStream;

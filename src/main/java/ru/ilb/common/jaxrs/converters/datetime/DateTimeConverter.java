@@ -13,32 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.rs;
+package ru.ilb.common.jaxrs.converters.datetime;
 
-import java.util.UUID;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.bind.DatatypeConverter;
 
 /**
- * <jaxb:javaType name="java.util.UUID"
- * parseMethod="ru.ilb.common.rs.UUIDConverter.parseUUID"
- * printMethod="ru.ilb.common.rs.UUIDConverter.printUUID"
- * />
- *
  * @author slavb
  */
-public class UUIDConverter {
+class DateTimeConverter {
 
-    public static UUID parseUUID(String s) {
+    public static Date fromString(String s) {
         if (s == null || s.length() == 0) {
             return null;
         }
-        return UUID.fromString(s);
+        Date date;
+        try {
+            date = DatatypeConverter.parseDateTime(s).getTime();
+        } catch (IllegalArgumentException ex) {
+            date = null;
+        }
+        return date;
     }
 
-    public static String printUUID(UUID arg0) {
+    public static String toString(Date arg0) {
         if (arg0 == null) {
             return null;
         }
-        return arg0.toString();
+        GregorianCalendar gc = new GregorianCalendar();
+        gc.setTime(arg0);
+        return DatatypeConverter.printDateTime(gc);
+
     }
 
 }
