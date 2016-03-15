@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Bystrobank
+ * Copyright 2016 slavb.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.jaxrs.converters.uuid;
+package ru.ilb.common.jaxrs.converters;
 
 import java.util.UUID;
+import javax.ws.rs.ext.ParamConverter;
 
 /**
+ *
  * @author slavb
  */
-class UUIDConverter {
+public class UUIDParamConverter implements ParamConverter<UUID> {
 
-    public static UUID fromString(String s) {
-        if (s == null || s.length() == 0) {
+    @Override
+    public UUID fromString(String value) {
+        if (value == null || value.length() == 0) {
             return null;
         }
-        return UUID.fromString(s);
+        return UUID.fromString(value);
     }
 
-    public static String toString(UUID arg0) {
-        if (arg0 == null) {
+    @Override
+    public String toString(UUID value) {
+        if (value == null) {
             return null;
         }
-        return arg0.toString();
-    }
+        return value.toString();
 
+    }
 }
