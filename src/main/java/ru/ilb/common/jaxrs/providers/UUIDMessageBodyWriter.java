@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.jaxrs.converters.uuid;
+package ru.ilb.common.jaxrs.providers;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.UUID;
@@ -24,23 +24,30 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
+/**
+ *
+ * @author slavb
+ */
 @Produces("text/plain")
 @Provider
-public class UUIDMessageBodyReader implements MessageBodyReader<UUID> {
+public class UUIDMessageBodyWriter implements MessageBodyWriter<UUID> {
 
     @Override
-    public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return true;
+    public boolean isWriteable(Class<?> type, Type type1, Annotation[] antns, MediaType mt) {
+        return UUID.class.isAssignableFrom(type);
     }
 
     @Override
-    public UUID readFrom(Class<UUID> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
-        java.util.Scanner s = new java.util.Scanner(entityStream).useDelimiter("\\A");
-        String uid = s.hasNext() ? s.next() : "";
-        return UUID.fromString(uid);
+    public long getSize(UUID t, Class<?> type, Type type1, Annotation[] antns, MediaType mt) {
+        return -1;
+    }
+
+    @Override
+    public void writeTo(UUID t, Class<?> type, Type type1, Annotation[] antns, MediaType mt, MultivaluedMap<String, Object> mm, OutputStream out) throws IOException, WebApplicationException {
+        out.write(t.toString().getBytes());
     }
 
 }

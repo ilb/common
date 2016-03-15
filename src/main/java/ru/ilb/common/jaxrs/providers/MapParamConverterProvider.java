@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.jaxrs.converters.date;
+package ru.ilb.common.jaxrs.providers;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
@@ -26,27 +27,30 @@ import javax.ws.rs.ext.Provider;
  * @author slavb
  */
 @Provider
-public class DateParamConverterProvider implements ParamConverterProvider {
+public class MapParamConverterProvider implements ParamConverterProvider {
 
-    private static class DateParamConverter implements ParamConverter<Date> {
+    private final Map< Class< ?>, ParamConverter< ?>> converters = new HashMap<>();
 
-        @Override
-        public Date fromString(String s) {
-            return DateConverter.fromString(s);
+    public void setConverters(Map<Class, Class> converters) {
+        try {
+            for (Map.Entry<Class, Class> entry : converters.entrySet()) {
+                this.converters.put(entry.getKey(), (ParamConverter< ?>) entry.getValue().newInstance());
+
+            }
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new RuntimeException(ex);
         }
 
-        @Override
-        public String toString(Date arg0) {
-            return DateConverter.toString(arg0);
-
-        }
     }
 
     @Override
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
-        if (rawType == Date.class) {
-            return (ParamConverter<T>) new DateParamConverter();
+        for (final Class< ?> type : converters.keySet()) {
+            if (type.isAssignableFrom(rawType)) {
+                return (ParamConverter<T>) converters.get(type);
+            }
         }
+
         return null;
     }
 

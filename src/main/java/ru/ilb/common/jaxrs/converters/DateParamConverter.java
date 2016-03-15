@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Bystrobank
+ * Copyright 2016 slavb.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,38 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.jaxrs.converters.datetime;
+package ru.ilb.common.jaxrs.converters;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import javax.ws.rs.ext.ParamConverter;
 import javax.xml.bind.DatatypeConverter;
 
 /**
+ *
  * @author slavb
  */
-class DateTimeConverter {
+public class DateParamConverter implements ParamConverter<Date> {
 
-    public static Date fromString(String s) {
-        if (s == null || s.length() == 0) {
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
+    @Override
+    public Date fromString(String value) {
+        if (value == null || value.length() == 0) {
             return null;
         }
-        Date date;
-        try {
-            date = DatatypeConverter.parseDateTime(s).getTime();
-        } catch (IllegalArgumentException ex) {
-            date = null;
-        }
-        return date;
+        return DatatypeConverter.parseDate(value).getTime();
     }
 
-    public static String toString(Date arg0) {
-        if (arg0 == null) {
+    @Override
+    public String toString(Date value) {
+        if (value == null) {
             return null;
         }
-        GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime(arg0);
-        return DatatypeConverter.printDateTime(gc);
+        return DATE_FORMAT.format(value);
 
     }
-
 }
