@@ -4,11 +4,11 @@
     <parent>
         <groupId>ru.ilb.common</groupId>
         <artifactId>common</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1</version>
     </parent>    
     <groupId>ru.ilb.common</groupId>
     <artifactId>common-meta</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
     <name>common-meta</name>
     <description>Common used schemas for UUID, empty types</description>
