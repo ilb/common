@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified"
+            xmlns="urn:ru:ilb:meta:emptytypes:emptytypes"
+            targetNamespace="urn:ru:ilb:meta:emptytypes:emptytypes"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+
+    <xsd:simpleType name="EmptyStringType">
+        <xsd:restriction base="xsd:string">
+            <xsd:length value="0"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="EmptyTimeType">
+        <xsd:union memberTypes="xsd:time EmptyStringType"/>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="EmptyDateType">
+        <xsd:union memberTypes="xsd:date EmptyStringType"/>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="EmptyDateTimeType">
+        <xsd:union memberTypes="xsd:dateTime EmptyStringType"/>
+    </xsd:simpleType>
+
+</xsd:schema>
