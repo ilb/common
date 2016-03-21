@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema elementFormDefault="qualified" xmlns="urn:ru:ilb:meta:basicuuid:basicuuid"
-            targetNamespace="urn:ru:ilb:meta:basicuuid:basicuuid"
+<xsd:schema elementFormDefault="qualified" xmlns="urn:ru:ilb:basicuuid:basicuuid"
+            targetNamespace="urn:ru:ilb:basicuuid:basicuuid"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:simpleType name="UUIDType">
         <xsd:annotation>
