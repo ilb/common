@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema elementFormDefault="qualified"
-            xmlns="urn:ru:ilb:meta:emptytypes:emptytypes"
-            targetNamespace="urn:ru:ilb:meta:emptytypes:emptytypes"
+            xmlns="urn:ru:ilb:emptytypes:emptytypes"
+            targetNamespace="urn:ru:ilb:emptytypes:emptytypes"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
 
