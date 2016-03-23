@@ -37,7 +37,7 @@ public class LazyCustomFieldAccessor<BeanT, ValueT> extends Accessor<BeanT, Valu
     public ValueT get(BeanT bean) throws AccessorException {
         try {
             IndirectContainer container = (IndirectContainer) field.get(bean);
-            if (container.isInstantiated()) {
+            if (container!=null&&container.isInstantiated()) {
                 return (ValueT) field.get(bean);
             } else {
                 return null;
