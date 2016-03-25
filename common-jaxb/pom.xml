@@ -4,11 +4,11 @@
     <parent>
         <groupId>ru.ilb.common</groupId>
         <artifactId>common</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3</version>
     </parent>
     <groupId>ru.ilb.common</groupId>
     <artifactId>common-jaxb</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.3</version>
     <packaging>jar</packaging>
     <name>common-jaxb</name>
     <description>Various jaxb support classes: XmlAdapters for core java classes</description>
