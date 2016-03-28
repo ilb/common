@@ -11,6 +11,7 @@ import com.sun.xml.internal.bind.AccessorFactory;
 import com.sun.xml.internal.bind.v2.runtime.reflect.Accessor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.mappings.DatabaseMapping;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Configurable
 public class LazyAccessorFactoryImpl implements AccessorFactory {
 
+    @Resource
     protected EntityManager entityManager;
 
     public void setEntityManager(EntityManager entityManager) {
