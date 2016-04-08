@@ -55,6 +55,7 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <org.springframework.version>4.2.4.RELEASE</org.springframework.version>
         <eclipselink.version>2.6.1</eclipselink.version>
+        <apache-cxf.version>3.1.6</apache-cxf.version>
     </properties>
     <build>
         <pluginManagement>
