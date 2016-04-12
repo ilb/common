@@ -27,10 +27,10 @@ import javax.ws.rs.core.Response;
  *
  * @author slavb
  */
-public class SendMailExceptionHandler extends ExceptionHandler{
-    
+public class SendMailExceptionHandler extends AbstractExceptionHandler<Exception> {
+
     private static final Logger LOG = Logger.getLogger(SendMailExceptionHandler.class.getName());
-    
+
     /**
      * default mail recipient
      */
@@ -45,11 +45,6 @@ public class SendMailExceptionHandler extends ExceptionHandler{
      */
     String mailCommand = "/usr/sbin/sendmail -t -oi";
 
-    /**
-     * minimum http response status to send mail, by default only 5XX errors are mailed
-     */
-    int mailResponseStatus = 500;
-    
     public void setMailTo(String mailTo) {
         this.mailTo = mailTo;
     }
@@ -62,20 +57,21 @@ public class SendMailExceptionHandler extends ExceptionHandler{
         this.mailCommand = mailCommand;
     }
 
-    public void setMailResponseStatus(int mailResponseStatus) {
-        this.mailResponseStatus = mailResponseStatus;
-    }
-
     @Override
     public Response toResponse(Exception ex) {
-        Response res=super.toResponse(ex);
-        if (res.getStatus() >= mailResponseStatus) {
-            String mailMsg = getMailMsg(ex, res.getStatus(), (String)res.getEntity());
-            sendMail(mailMsg);
+        int responseStatus = defaultResponseStatus;
+        String outMess = ex.getMessage();
+        if (outMess == null) {
+            outMess = "";
         }
-        
-        return res;
+        LOG.log(Level.SEVERE, outMess, ex);
+
+        String mailMsg = getMailMsg(ex, responseStatus, outMess);
+        sendMail(mailMsg);
+
+        return Response.status(responseStatus).entity(outMess).type(contentType).build();
     }
+
     private String getMailMsg(Exception ex, int code, String outMess) {
         String mailMsg = "";
         try {
@@ -118,5 +114,5 @@ public class SendMailExceptionHandler extends ExceptionHandler{
         }
 
     }
-    
+
 }

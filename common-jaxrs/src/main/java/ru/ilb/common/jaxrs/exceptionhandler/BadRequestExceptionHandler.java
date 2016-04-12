@@ -17,23 +17,27 @@ package ru.ilb.common.jaxrs.exceptionhandler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 
 /**
  *
  * @author slavb
  */
-public class ExceptionHandler extends AbstractExceptionHandler<Exception>{
-    private static final Logger LOG = Logger.getLogger(ExceptionHandler.class.getName());
+@Provider
+public class BadRequestExceptionHandler extends AbstractExceptionHandler<BadRequestException> {
+
+    private static final Logger LOG = Logger.getLogger(BadRequestExceptionHandler.class.getName());
 
     @Override
-    public Response toResponse(Exception ex) {
+    public Response toResponse(BadRequestException ex) {
         int responseStatus = defaultResponseStatus;
         String outMess = ex.getMessage();
-        if (outMess == null) {
-            outMess = "";
+        if (ex.getCause() != null && ex.getCause().getMessage() != null) {
+            outMess = ex.getCause().getMessage();
         }
-        LOG.log(Level.SEVERE, outMess, ex);
+        LOG.log(Level.WARNING, outMess, ex);
 
         return Response.status(responseStatus).entity(outMess).type(contentType).build();
 
