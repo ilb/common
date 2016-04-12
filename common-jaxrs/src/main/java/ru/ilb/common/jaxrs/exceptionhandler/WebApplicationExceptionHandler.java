@@ -15,25 +15,41 @@
  */
 package ru.ilb.common.jaxrs.exceptionhandler;
 
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 
 /**
  *
  * @author slavb
  */
-public class ExceptionHandler extends AbstractExceptionHandler<Exception>{
-    private static final Logger LOG = Logger.getLogger(ExceptionHandler.class.getName());
+@Provider
+public class WebApplicationExceptionHandler extends AbstractExceptionHandler<WebApplicationException>{
+    private static final Logger LOG = Logger.getLogger(WebApplicationExceptionHandler.class.getName());
 
     @Override
-    public Response toResponse(Exception ex) {
+    public Response toResponse(WebApplicationException ex) {
         int responseStatus = defaultResponseStatus;
         String outMess = ex.getMessage();
+        try {
+                Response r = ((WebApplicationException) ex).getResponse();
+                if (r != null) {
+                    if (r.getEntity() != null && r.getEntity() instanceof InputStream) {
+                        outMess = new java.util.Scanner((InputStream) r.getEntity(), "UTF-8").useDelimiter("\\A").next();
+                    }
+                }
+                responseStatus = ((WebApplicationException) ex).getResponse().getStatus();
+
+        } catch (Throwable ex_) {
+            LOG.log(Level.SEVERE, "error on getting  addinional exception info", ex_);
+        }
         if (outMess == null) {
             outMess = "";
         }
-        LOG.log(Level.SEVERE, outMess, ex);
+        LOG.log(Level.WARNING, outMess, ex);
 
         return Response.status(responseStatus).entity(outMess).type(contentType).build();
 

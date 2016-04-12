@@ -15,28 +15,34 @@
  */
 package ru.ilb.common.jaxrs.exceptionhandler;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 
 /**
- *
  * @author slavb
+ * @param <E>
  */
-public class ExceptionHandler extends AbstractExceptionHandler<Exception>{
-    private static final Logger LOG = Logger.getLogger(ExceptionHandler.class.getName());
+public abstract class AbstractExceptionHandler<E extends Throwable> implements ExceptionMapper<E> {
 
-    @Override
-    public Response toResponse(Exception ex) {
-        int responseStatus = defaultResponseStatus;
-        String outMess = ex.getMessage();
-        if (outMess == null) {
-            outMess = "";
-        }
-        LOG.log(Level.SEVERE, outMess, ex);
+    private static final Logger LOG = Logger.getLogger(AbstractExceptionHandler.class.getName());
 
-        return Response.status(responseStatus).entity(outMess).type(contentType).build();
+    /**
+     * default http response status
+     */
+    int defaultResponseStatus = 500;
 
+    /**
+     * default content type
+     */
+    String contentType = "text/plain; charset=UTF-8";
+
+    public void setDefaultResponseStatus(int defaultResponseStatus) {
+        this.defaultResponseStatus = defaultResponseStatus;
     }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
 
 }
