@@ -28,6 +28,11 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class BadRequestExceptionHandler extends AbstractExceptionHandler<BadRequestException> {
 
+    /**
+     * default http response status
+     */
+    int defaultResponseStatus = 400;
+
     private static final Logger LOG = Logger.getLogger(BadRequestExceptionHandler.class.getName());
 
     @Override
