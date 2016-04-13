@@ -14,6 +14,14 @@
     <description>Various jaxrs support classes: ParamConverters and Providers for core java classes</description>
     <dependencies>
         <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-extension-search</artifactId>
+            <version>${apache-cxf.version}</version>
+            <type>jar</type>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>

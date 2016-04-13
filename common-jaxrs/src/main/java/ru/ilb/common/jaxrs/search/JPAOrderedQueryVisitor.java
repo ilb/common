@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.jpa.search;
+package ru.ilb.common.jaxrs.search;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
