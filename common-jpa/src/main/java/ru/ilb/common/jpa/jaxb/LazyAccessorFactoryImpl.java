@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2016 Bystrobank.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package ru.ilb.common.jpa.jaxb;
 
@@ -11,41 +21,32 @@ import com.sun.xml.internal.bind.AccessorFactory;
 import com.sun.xml.internal.bind.v2.runtime.reflect.Accessor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import org.eclipse.persistence.descriptors.ClassDescriptor;
-import org.eclipse.persistence.mappings.DatabaseMapping;
-import org.eclipse.persistence.sessions.Session;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author slavb
  */
-@Configurable
 public class LazyAccessorFactoryImpl implements AccessorFactory {
 
-    @Resource
-    protected EntityManager entityManager;
+    private static boolean indirectContainer = false;
+    static {
+        try {
+            Class ic=Class.forName("org.eclipse.persistence.indirection.IndirectContainer");
+            indirectContainer=true;
+        } catch (ClassNotFoundException ex) {
 
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+        }
     }
 
     public LazyAccessorFactoryImpl() {
     }
 
     @Override
-    @Transactional
     public Accessor createFieldAccessor(Class bean, Field field, boolean readOnly) {
-        //- use my custom accessor
-        ClassDescriptor cd = entityManager.unwrap(Session.class).getDescriptor(bean);
-        DatabaseMapping dm = cd != null
-                ? cd.getMappingForAttributeName(field.getName())
-                : null;
-        if (dm != null && dm.isLazy()) {
-            return new LazyCustomFieldAccessor(bean, field);
+        if (indirectContainer) {
+            return readOnly
+                    ? new LazyCustomFieldAccessor.ReadOnlyFieldReflection(field)
+                    : new LazyCustomFieldAccessor.FieldReflection(field);
         } else {
             return readOnly
                     ? new Accessor.ReadOnlyFieldReflection(field)
