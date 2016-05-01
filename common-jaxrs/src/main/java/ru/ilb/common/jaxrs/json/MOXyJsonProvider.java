@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.jaxrs.providers;
+package ru.ilb.common.jaxrs.json;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
