@@ -18,6 +18,8 @@ package ru.ilb.common.jaxrs.exceptionhandler;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,7 +45,12 @@ public class SendMailExceptionHandler extends AbstractExceptionHandler<Exception
     /**
      * default mail command
      */
-    String mailCommand = "/usr/sbin/sendmail -t -oi";
+    String mailCommand = "/usr/sbin/sendmail";
+
+    /**
+     * default mail command
+     */
+    String mailCommandParams = "-t -oi";
 
     public void setMailTo(String mailTo) {
         this.mailTo = mailTo;
@@ -57,6 +64,11 @@ public class SendMailExceptionHandler extends AbstractExceptionHandler<Exception
         this.mailCommand = mailCommand;
     }
 
+    public void setMailCommandParams(String mailCommandParams) {
+        this.mailCommandParams = mailCommandParams;
+    }
+
+
     @Override
     public Response toResponse(Exception ex) {
         int responseStatus = defaultResponseStatus;
@@ -67,7 +79,7 @@ public class SendMailExceptionHandler extends AbstractExceptionHandler<Exception
         LOG.log(Level.SEVERE, outMess, ex);
 
         String mailMsg = getMailMsg(ex, responseStatus, outMess);
-        sendMail(mailMsg);
+        sendMailCheck(mailMsg);
 
         return Response.status(responseStatus).entity(outMess).type(contentType).build();
     }
@@ -95,12 +107,23 @@ public class SendMailExceptionHandler extends AbstractExceptionHandler<Exception
         }
         return mailMsg;
     }
+    private void sendMailCheck(String mailMsg) {
+        if(Files.exists(Paths.get(mailCommand))){
+            if(Files.isExecutable(Paths.get(mailCommand))){
+                sendMail(mailMsg);
+            }else{
+                LOG.log(Level.SEVERE, "mail command {0} not executable", mailCommand);
+            }
+        } else {
+            LOG.log(Level.SEVERE, "mail command {0} not exists", mailCommand);
+        }
+    }
 
     private void sendMail(String mailMsg) {
         try {
             //http://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html
             //to capture strerr/stdout and write to stdin need to create separate threads - simplify
-            Process p = Runtime.getRuntime().exec(mailCommand);
+            Process p = Runtime.getRuntime().exec(mailCommand + " " + mailCommandParams);
             OutputStream o = p.getOutputStream();
             o.write(mailMsg.getBytes("UTF-8"));
             o.flush();
