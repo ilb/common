@@ -33,7 +33,7 @@ import org.apache.cxf.jaxrs.utils.schemas.SchemaHandler;
 @Produces({MediaType.APPLICATION_JSON, MediaType.WILDCARD, "application/x-javascript"})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.WILDCARD})
 @Provider
-public class MOXyJsonProvider extends org.eclipse.persistence.jaxb.rs.MOXyJsonProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
+public class MOXyJsonProvider extends ru.ilb.common.jaxrs.json.eclipse.MOXyJsonProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
 
     private Schema schema;
     private Map<String, SchemaHandler> schemaHandlers;
