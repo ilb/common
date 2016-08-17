@@ -4,11 +4,11 @@
     <parent>
         <groupId>ru.ilb.common</groupId>
         <artifactId>common</artifactId>
-        <version>1.8</version>
+        <version>1.9-SNAPSHOT</version>
     </parent>    
     <groupId>ru.ilb.common</groupId>
     <artifactId>common-jpa</artifactId>
-    <version>1.8</version>
+    <version>1.9-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>common-jpa</name>
     <description>Various jpa support classes: AttributeConverters for core java classes</description>
