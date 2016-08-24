@@ -46,8 +46,8 @@ public class WebApplicationExceptionHandler extends AbstractExceptionHandler<Web
         } catch (Throwable ex_) {
             LOG.log(Level.SEVERE, "error on getting  addinional exception info", ex_);
         }
-        if (outMess == null) {
-            outMess = "";
+        if (outMess == null || outMess.isEmpty()) {
+            outMess = ex.toString();
         }
         LOG.log(Level.WARNING, outMess, ex);
 
