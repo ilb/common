@@ -42,6 +42,9 @@ public class BadRequestExceptionHandler extends AbstractExceptionHandler<BadRequ
         if (ex.getCause() != null && ex.getCause().getMessage() != null) {
             outMess = ex.getCause().getMessage();
         }
+        if (outMess == null || outMess.isEmpty()) {
+            outMess = ex.toString();
+        }
         LOG.log(Level.WARNING, outMess, ex);
 
         return Response.status(responseStatus).entity(outMess).type(contentType).build();

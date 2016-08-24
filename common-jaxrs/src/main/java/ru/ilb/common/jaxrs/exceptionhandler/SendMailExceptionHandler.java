@@ -73,8 +73,8 @@ public class SendMailExceptionHandler extends AbstractExceptionHandler<Exception
     public Response toResponse(Exception ex) {
         int responseStatus = defaultResponseStatus;
         String outMess = ex.getMessage();
-        if (outMess == null) {
-            outMess = "";
+        if (outMess == null || outMess.isEmpty()) {
+            outMess = ex.toString();
         }
         LOG.log(Level.SEVERE, outMess, ex);
 
