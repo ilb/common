@@ -104,7 +104,11 @@ public class AsyncTaskManager  {
                     throw new RuntimeException(ex);
                 } catch (ExecutionException ex) {
                     if (ex.getCause() != null) {
-                        throw (RuntimeException) ex.getCause();
+                        if(ex.getCause() instanceof RuntimeException ){
+                            throw (RuntimeException) ex.getCause();
+                        }else {
+                            throw new RuntimeException(ex.getCause());
+                        }
                     } else {
                         throw new RuntimeException(ex);
                     }
