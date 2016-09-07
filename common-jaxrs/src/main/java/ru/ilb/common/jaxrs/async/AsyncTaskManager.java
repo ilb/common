@@ -64,34 +64,38 @@ public class AsyncTaskManager  {
         Response response;
         MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
         String mode = queryParams.getFirst("mode");
-        String seeOther = queryParams.getFirst("seeOther");
         String taskId = queryParams.getFirst("taskId");
-
+        String i = queryParams.getFirst("i");
         if ("wait".equals(mode)) {
-            String i = queryParams.getFirst("i");
+            response=wait(taskId, uriInfo, i);
+        } else if ("cancel".equals(mode)) {
+            response=cancel(taskId);
+        } else {
+            response=submit(clbl, uriInfo);
+        }
+        return response;
 
+    }
+    public Response submit(Callable clbl, UriInfo uriInfo) {
+            AsyncTask task = submit(clbl);
+            UriBuilder uri = uriInfo.getAbsolutePathBuilder().queryParam("mode", "wait").queryParam("taskId", task.getTaskId()).queryParam("i", 0);
+            Response response = Response.seeOther(uri.build()).build();
+            return response;
+    }
+    
+    public Response wait(String taskId, UriInfo uriInfo, String i) {
             AsyncTask task = get(taskId);
+            Response response;
             if (task == null) {
                 //Returns 410, “Gone” if job doesn’t exist anymore
                 response = Response.status(Response.Status.GONE).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " не найдена").build();
 
             } else if (!task.getFuture().isDone()) {
-                UriBuilder uri = uriInfo.getAbsolutePathBuilder().queryParam("mode", "wait").queryParam("taskId", taskId).queryParam("i", Integer.parseInt(i) + 1);
-                if (seeOther != null) {
-                    uri.queryParam("seeOther", seeOther);
-                    int timeout = 2;
-                    if (seeOther.length() > 0) {
-                        timeout = Integer.parseInt(seeOther);
-                    }
-                    try {
-                        TimeUnit.SECONDS.sleep(timeout);
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    response = Response.seeOther(uri.build()).build();
-                } else {
-                    response = Response.status(Response.Status.ACCEPTED).type("text/plain; charset=UTF-8").entity("Выполняется.. ").header("Refresh", "2;" + uri.build().toString()).build();
+                UriBuilder uri = uriInfo.getAbsolutePathBuilder().queryParam("mode", "wait").queryParam("taskId", taskId);
+                if(i!=null){
+                    uri=uri.queryParam("i", Integer.parseInt(i) + 1);
                 }
+                response = Response.status(Response.Status.ACCEPTED).type("text/plain; charset=UTF-8").entity("Выполняется.. ").header("Refresh", "2;" + uri.build().toString()).build();
             } else {
                 try {
                     if (task.getFuture().get() instanceof Response) {
@@ -114,8 +118,13 @@ public class AsyncTaskManager  {
                     }
                 }
             }
-        } else if ("cancel".equals(mode)) {
+            return response;
+        
+    }
+    
+    public Response cancel(String taskId) {
             AsyncTask task = get(taskId);
+            Response response;
             if (task == null) {
                 //Returns 410, “Gone” if job doesn’t exist anymore
                 response = Response.status(Response.Status.GONE).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " не найдена").build();
@@ -127,17 +136,7 @@ public class AsyncTaskManager  {
             } else {
                 response = Response.status(Response.Status.OK).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " уже завершена").build();
             }
-        } else {
-            AsyncTask task = submit(clbl);
-            UriBuilder uri = uriInfo.getAbsolutePathBuilder().queryParam("mode", "wait").queryParam("taskId", task.getTaskId()).queryParam("i", 0);
-            if (seeOther != null) {
-                uri.queryParam("seeOther", seeOther);
-            }
-            response = Response.seeOther(uri.build()).build();
-
-        }
         return response;
-
     }
 
     public AsyncTask remove(String taskId) {
