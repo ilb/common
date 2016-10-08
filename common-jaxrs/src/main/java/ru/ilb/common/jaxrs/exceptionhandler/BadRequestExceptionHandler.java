@@ -18,7 +18,9 @@ package ru.ilb.common.jaxrs.exceptionhandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
@@ -26,18 +28,12 @@ import javax.ws.rs.ext.Provider;
  * @author slavb
  */
 @Provider
-public class BadRequestExceptionHandler extends AbstractExceptionHandler<BadRequestException> {
-
-    /**
-     * default http response status
-     */
-    int defaultResponseStatus = 400;
+public class BadRequestExceptionHandler implements ExceptionMapper<BadRequestException> {
 
     private static final Logger LOG = Logger.getLogger(BadRequestExceptionHandler.class.getName());
 
     @Override
     public Response toResponse(BadRequestException ex) {
-        int responseStatus = defaultResponseStatus;
         String outMess = ex.getMessage();
         if (ex.getCause() != null && ex.getCause().getMessage() != null) {
             outMess = ex.getCause().getMessage();
@@ -47,7 +43,7 @@ public class BadRequestExceptionHandler extends AbstractExceptionHandler<BadRequ
         }
         LOG.log(Level.WARNING, outMess, ex);
 
-        return Response.status(responseStatus).entity(outMess).type(contentType).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(outMess).type(MediaType.TEXT_PLAIN).build();
 
     }
 

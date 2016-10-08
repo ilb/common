@@ -19,7 +19,9 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
@@ -27,12 +29,12 @@ import javax.ws.rs.ext.Provider;
  * @author slavb
  */
 @Provider
-public class WebApplicationExceptionHandler extends AbstractExceptionHandler<WebApplicationException>{
+public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplicationException>{
     private static final Logger LOG = Logger.getLogger(WebApplicationExceptionHandler.class.getName());
 
     @Override
     public Response toResponse(WebApplicationException ex) {
-        int responseStatus = defaultResponseStatus;
+        int responseStatus = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
         String outMess = ex.getMessage();
         try {
                 Response r = ((WebApplicationException) ex).getResponse();
@@ -51,7 +53,7 @@ public class WebApplicationExceptionHandler extends AbstractExceptionHandler<Web
         }
         LOG.log(Level.WARNING, outMess, ex);
 
-        return Response.status(responseStatus).entity(outMess).type(contentType).build();
+        return Response.status(responseStatus).entity(outMess).type(MediaType.TEXT_PLAIN).build();
 
     }
 

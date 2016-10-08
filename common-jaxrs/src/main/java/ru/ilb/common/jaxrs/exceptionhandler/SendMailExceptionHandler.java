@@ -23,13 +23,15 @@ import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 
 /**
  *
  * @author slavb
  */
-public class SendMailExceptionHandler extends AbstractExceptionHandler<Exception> {
+public class SendMailExceptionHandler implements ExceptionMapper<Exception> {
 
     private static final Logger LOG = Logger.getLogger(SendMailExceptionHandler.class.getName());
 
@@ -71,20 +73,19 @@ public class SendMailExceptionHandler extends AbstractExceptionHandler<Exception
 
     @Override
     public Response toResponse(Exception ex) {
-        int responseStatus = defaultResponseStatus;
         String outMess = ex.getMessage();
         if (outMess == null || outMess.isEmpty()) {
             outMess = ex.toString();
         }
         LOG.log(Level.SEVERE, outMess, ex);
 
-        String mailMsg = getMailMsg(ex, responseStatus, outMess);
+        String mailMsg = getMailMsg(ex, outMess);
         sendMailCheck(mailMsg);
 
-        return Response.status(responseStatus).entity(outMess).type(contentType).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(outMess).type(MediaType.TEXT_PLAIN).build();
     }
 
-    private String getMailMsg(Exception ex, int code, String outMess) {
+    private String getMailMsg(Exception ex, String outMess) {
         String mailMsg = "";
         try {
             //thread idntifier matches value in server log
@@ -98,9 +99,9 @@ public class SendMailExceptionHandler extends AbstractExceptionHandler<Exception
             int line2 = trace.indexOf("\n");
             mailMsg = "To: " + mailTo + "\n" //From header sendmail should generate
                     + "Subject: " + mailSubject + " " + threadid + "\n"
-                    + "Content-Type: " + contentType + "\n\n"
+                    + "Content-Type: " + MediaType.TEXT_PLAIN + "\n\n"
                     + cause + ": " + outMess + "\n"
-                    + code + " " + threadid + " " + uuid + "\n"
+                    + " " + threadid + " " + uuid + "\n"
                     + (line2 < 0 ? trace : trace.substring(line2 + 1));
         } catch (Throwable ex_) {
             LOG.log(Level.SEVERE, "error constructing mailMsg", ex_);
