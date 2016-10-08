@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2016 slavb.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package ru.ilb.common.jaxrs.interceptors;
 
@@ -9,20 +19,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Map;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.WriterInterceptor;
+import javax.ws.rs.ext.WriterInterceptorContext;
 import org.apache.cxf.helpers.IOUtils;
-import org.apache.cxf.interceptor.Fault;
-import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.AbstractPhaseInterceptor;
-import org.apache.cxf.phase.Phase;
+import ru.ilb.common.jaxrs.io.ByteArrayInOutStream;
 
 /**
  *
  * @author slavb
  */
-public class ReplaceOutInterceptor extends AbstractPhaseInterceptor<Message> {
+public class ReplaceOutInterceptor implements WriterInterceptor {
 
     String encoding = "UTF-8";
 
@@ -42,61 +51,23 @@ public class ReplaceOutInterceptor extends AbstractPhaseInterceptor<Message> {
         this.mediaType = JAXRSUtils.toMediaType(mediaType);
     }
 
-    public ReplaceOutInterceptor() {
-        super(Phase.PRE_STREAM);
-    }
-
     @Override
-    public void handleMessage(Message message) throws Fault {
-        String contentType = (String) message.get(Message.CONTENT_TYPE);
-        if (replacements!=null && mediaType.isCompatible(JAXRSUtils.toMediaType(contentType))) {
-            replaceContents(message);
-        }
-    }
-
-    private void replaceContents(Message message) {
-        OutputStream os = message.getContent(OutputStream.class);
-        CachedStream cs = new CachedStream();
-        message.setContent(OutputStream.class, cs);
-
-        message.getInterceptorChain().doIntercept(message);
-
-        try {
-            cs.flush();
-            CachedOutputStream csnew = (CachedOutputStream) message.getContent(OutputStream.class);
-
-            String contents = IOUtils.toString(csnew.getInputStream());
+    public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
+        if (replacements != null && mediaType.isCompatible(context.getMediaType())) {
+            OutputStream os = context.getOutputStream();
+            ByteArrayInOutStream out = new ByteArrayInOutStream();
+            context.setOutputStream(out);
+            context.proceed();
+            String contents = IOUtils.toString(out.getInputStream());
             for (Map.Entry<String, String> keyValue : replacements.entrySet()) {
                 contents = contents.replaceAll(keyValue.getKey(), keyValue.getValue());
             }
             //String replaced=contents.replaceAll(regex, replacement);
             os.write(contents.getBytes(Charset.forName(encoding)));
             os.flush();
-
-            message.setContent(OutputStream.class, os);
-
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+        } else {
+            context.proceed();
         }
     }
 
-    private class CachedStream extends CachedOutputStream {
-
-        public CachedStream() {
-            super();
-        }
-
-        @Override
-        protected void doFlush() throws IOException {
-            currentStream.flush();
-        }
-
-        @Override
-        protected void doClose() throws IOException {
-        }
-
-        @Override
-        protected void onWrite() throws IOException {
-        }
-    }
 }
