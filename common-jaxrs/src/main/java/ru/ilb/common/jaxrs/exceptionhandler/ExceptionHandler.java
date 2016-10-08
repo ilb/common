@@ -17,25 +17,26 @@ package ru.ilb.common.jaxrs.exceptionhandler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 
 /**
  *
  * @author slavb
  */
-public class ExceptionHandler extends AbstractExceptionHandler<Exception>{
+public class ExceptionHandler implements ExceptionMapper<Exception>{
     private static final Logger LOG = Logger.getLogger(ExceptionHandler.class.getName());
 
     @Override
     public Response toResponse(Exception ex) {
-        int responseStatus = defaultResponseStatus;
         String outMess = ex.getMessage();
         if (outMess == null || outMess.isEmpty()) {
             outMess = ex.toString();
         }
         LOG.log(Level.SEVERE, outMess, ex);
 
-        return Response.status(responseStatus).entity(outMess).type(contentType).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(outMess).type(MediaType.TEXT_PLAIN).build();
 
     }
 
