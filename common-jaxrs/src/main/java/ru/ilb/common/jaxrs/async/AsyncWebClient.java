@@ -26,8 +26,7 @@ public class AsyncWebClient {
     public static Response get(Object resource, Response res) {
         org.apache.cxf.jaxrs.client.Client client = WebClient.client(resource);
         WebClient wClient = WebClient.fromClient(client);        
-        getResponse(wClient, res);
-        return res;
+        return getResponse(wClient, res);
     }
     /**
      * TODO: чтение заголовка Refresh, секунд
