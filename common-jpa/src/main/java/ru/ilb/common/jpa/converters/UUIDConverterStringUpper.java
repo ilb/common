@@ -23,7 +23,7 @@ import javax.persistence.Converter;
  *
  * @author rusanov
  */
-@Converter
+@Converter(autoApply = true)
 public class UUIDConverterStringUpper implements AttributeConverter<UUID, String> {
 
     @Override
