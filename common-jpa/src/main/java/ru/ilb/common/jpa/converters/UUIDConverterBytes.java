@@ -15,7 +15,6 @@
  */
 package ru.ilb.common.jpa.converters;
 
-import java.nio.ByteBuffer;
 import java.util.UUID;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -24,37 +23,16 @@ import javax.persistence.Converter;
  *
  * @author slavb
  */
-@Converter
+@Converter(autoApply = true)
 public class UUIDConverterBytes implements AttributeConverter<UUID, byte[]> {
 
     @Override
     public byte[] convertToDatabaseColumn(UUID uuid) {
-        if(uuid==null){
-            return null;
-        }
-        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-        return bb.array();
+        return UUIDConverter.uuidToBytes(uuid);
     }
 
     @Override
     public UUID convertToEntityAttribute(byte[] bytes) {
-        if(bytes==null || bytes.length==0){
-            return null;
-        }
-        if (bytes.length != 16) {
-            throw new IllegalArgumentException();
-        }
-        int i = 0;
-        long msl = 0;
-        for (; i < 8; i++) {
-            msl = (msl << 8) | (bytes[i] & 0xFF);
-        }
-        long lsl = 0;
-        for (; i < 16; i++) {
-            lsl = (lsl << 8) | (bytes[i] & 0xFF);
-        }
-        return new UUID(msl, lsl);
+        return UUIDConverter.bytesToUUID(bytes);
     }
 }
