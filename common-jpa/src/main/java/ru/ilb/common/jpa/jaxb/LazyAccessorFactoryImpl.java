@@ -15,12 +15,14 @@
  */
 package ru.ilb.common.jpa.jaxb;
 
-import com.sun.xml.bind.AccessorFactory;
-import com.sun.xml.bind.AccessorFactoryImpl;
-import com.sun.xml.bind.api.AccessorException;
-import com.sun.xml.bind.v2.runtime.reflect.Accessor;
-//import com.sun.xml.internal.bind.AccessorFactory;
-//import com.sun.xml.internal.bind.v2.runtime.reflect.Accessor;
+//import com.sun.xml.bind.AccessorFactory;
+//import com.sun.xml.bind.AccessorFactoryImpl;
+//import com.sun.xml.bind.api.AccessorException;
+//import com.sun.xml.bind.v2.runtime.reflect.Accessor;
+import com.sun.xml.internal.bind.AccessorFactory;
+import com.sun.xml.internal.bind.AccessorFactoryImpl;
+import com.sun.xml.internal.bind.api.AccessorException;
+import com.sun.xml.internal.bind.v2.runtime.reflect.Accessor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import javax.xml.bind.JAXBException;
