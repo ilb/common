@@ -15,54 +15,82 @@
  */
 package ru.ilb.common.jpa.jaxb;
 
-//import com.sun.xml.bind.AccessorFactory;
-//import com.sun.xml.bind.v2.runtime.reflect.Accessor;
-import com.sun.xml.internal.bind.AccessorFactory;
-import com.sun.xml.internal.bind.v2.runtime.reflect.Accessor;
+import com.sun.xml.bind.AccessorFactory;
+import com.sun.xml.bind.AccessorFactoryImpl;
+import com.sun.xml.bind.api.AccessorException;
+import com.sun.xml.bind.v2.runtime.reflect.Accessor;
+//import com.sun.xml.internal.bind.AccessorFactory;
+//import com.sun.xml.internal.bind.v2.runtime.reflect.Accessor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import javax.xml.bind.JAXBException;
 
 /**
+ * https://github.com/IIIkiper/habr/blob/master/HLS/src/main/java/ru/habr/zrd/hls/jaxb/JAXBHibernateAccessorFactory.java
  *
  * @author slavb
  */
 public class LazyAccessorFactoryImpl implements AccessorFactory {
 
-    private static boolean indirectContainer = false;
+    private static boolean enabled = false;
+
+    /*
+	 * Реализация AccessorFactory уже написана - AccessorFactoryImpl. Судя по всему это singleton, 
+	 * и отнаследоваться от него не получится, поэтому сделаем его делегатом и напишем wrapper.
+     */
+    private final AccessorFactory accessorFactory = AccessorFactoryImpl.getInstance();
+
     static {
         try {
-            Class ic=Class.forName("org.eclipse.persistence.indirection.IndirectContainer");
-            indirectContainer=true;
+            Class ic = Class.forName("org.eclipse.persistence.indirection.IndirectContainer");
+            enabled = true;
         } catch (ClassNotFoundException ex) {
-
         }
     }
 
-    public LazyAccessorFactoryImpl() {
+    /*
+	 * Также потребуется некая реализация Accessor. Поскольку больше она нигде не нужна, сделаем
+	 * ее в виде private inner class, чтобы не болталась по проекту.
+     */
+    private static class JAXBEclipseLinkAccessor<B, V> extends Accessor<B, V> {
+
+        private final Accessor<B, V> accessor;
+
+        public JAXBEclipseLinkAccessor(Accessor<B, V> accessor) {
+            super(accessor.getValueType());
+            this.accessor = accessor;
+        }
+
+        @Override
+        public V get(B bean) throws AccessorException {
+            V value = accessor.get(bean);
+            /*
+			 * Вот оно! Ради этого весь сыр-бор. Если кому-то простое зануление может показаться неправильным,
+			 * он волен сделать тут все, что захочется.
+			 * Метод Hibernate.isInitialized() c одинаковым поведением присутствует и в Hibernate3,  и Hibernate4. 
+             */
+            return EclipseLinkUtils.isInitialized(value) ? value : null;
+        }
+
+        @Override
+        public void set(B bean, V value) throws AccessorException {
+            accessor.set(bean, value);
+        }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public Accessor createFieldAccessor(Class bean, Field field, boolean readOnly) {
-        if (indirectContainer) {
-            return readOnly
-                    ? new LazyCustomFieldAccessor.ReadOnlyFieldReflection(field)
-                    : new LazyCustomFieldAccessor.FieldReflection(field);
-        } else {
-            return readOnly
-                    ? new Accessor.ReadOnlyFieldReflection(field)
-                    : new Accessor.FieldReflection(field);
-        }
+    public Accessor createFieldAccessor(Class bean, Field field, boolean readOnly) throws JAXBException {
+        Accessor accessor = accessorFactory.createFieldAccessor(bean, field, readOnly);
+        return enabled ? new JAXBEclipseLinkAccessor(accessor) : accessor;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public Accessor createPropertyAccessor(Class bean, Method getter, Method setter) {
-        //-- Use Jaxb's default accessors.
-        if (getter == null) {
-            return new Accessor.SetterOnlyReflection(setter);
-        }
-        if (setter == null) {
-            return new Accessor.GetterOnlyReflection(getter);
-        }
-        return new Accessor.GetterSetterReflection(getter, setter);
+    public Accessor createPropertyAccessor(Class bean, Method getter, Method setter) throws JAXBException {
+        Accessor accessor = accessorFactory.createPropertyAccessor(bean, getter, setter);
+        return enabled ? new JAXBEclipseLinkAccessor(accessor) : accessor;
     }
+
+
 }
