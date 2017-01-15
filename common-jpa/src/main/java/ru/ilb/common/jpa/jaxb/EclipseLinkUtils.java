@@ -23,7 +23,11 @@ import org.eclipse.persistence.indirection.IndirectContainer;
  */
 public class EclipseLinkUtils {
     public static boolean isInitialized(Object value) {
-        return value != null && value instanceof IndirectContainer && !((IndirectContainer) value).isInstantiated();
+        boolean result=true;
+        if(value != null && value instanceof IndirectContainer && !((IndirectContainer) value).isInstantiated()) {
+            result=false;
+        }
+        return result;
     }
     
 }
