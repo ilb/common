@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.ilb.common</groupId>
     <artifactId>common</artifactId>
-    <version>1.12</version>
+    <version>1.13-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>common</name>
     <description>Various jaxrs, jpa and jaxb support classes</description>
@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:https://github.com/ilb/common.git</connection>
         <url>https://github.com/ilb/common</url>
-        <tag>common-1.12</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
