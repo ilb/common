@@ -14,6 +14,7 @@ import org.eclipse.persistence.mappings.OneToOneMapping;
 import org.eclipse.persistence.sessions.Session;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import ru.ilb.common.jpa.jaxb.EclipseLinkUtils;
 
 /**
  *
@@ -26,7 +27,11 @@ public class DescriptorUtils {
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
-
+    /**
+     * Method fixes all one-to-many and one-to-one fields with mapped-by property
+     * by filling owning side reference
+     * @param entity 
+     */
     public void fixInverseLinks(Object entity) {
         final BeanWrapper src = new BeanWrapperImpl(entity);
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
@@ -41,7 +46,7 @@ public class DescriptorUtils {
                     OneToManyMapping dmOtM = (OneToManyMapping) dm;
                     if (dmOtM.getMappedBy() != null) {
                         List srcValue = (List) src.getPropertyValue(pd.getName());
-                        if (srcValue != null) {
+                        if (srcValue != null && EclipseLinkUtils.isInitialized(srcValue)) {
                             for (Object v : srcValue) {
                                 final BeanWrapper srcv = new BeanWrapperImpl(v);
                                 srcv.setPropertyValue(dmOtM.getMappedBy(), entity);
@@ -55,7 +60,7 @@ public class DescriptorUtils {
                     OneToOneMapping dmOtO = (OneToOneMapping) dm;
                     if (dmOtO.getMappedBy() != null) {
                         Object srcValue = src.getPropertyValue(pd.getName());
-                        if (srcValue != null) {
+                        if (srcValue != null && EclipseLinkUtils.isInitialized(srcValue)) {
                             final BeanWrapper srcv = new BeanWrapperImpl(srcValue);
                             srcv.setPropertyValue(dmOtO.getMappedBy(), entity);
                             fixInverseLinks(srcValue);
