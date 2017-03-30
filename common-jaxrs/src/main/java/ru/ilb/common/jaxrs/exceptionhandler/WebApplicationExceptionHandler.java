@@ -18,18 +18,22 @@ package ru.ilb.common.jaxrs.exceptionhandler;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import org.apache.cxf.jaxrs.impl.ResponseImpl;
+import org.apache.cxf.message.Message;
 
 /**
  *
  * @author slavb
  */
 @Provider
-public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplicationException>{
+public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplicationException> {
+
     private static final Logger LOG = Logger.getLogger(WebApplicationExceptionHandler.class.getName());
 
     @Override
@@ -37,13 +41,20 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
         int responseStatus = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
         String outMess = ex.getMessage();
         try {
-                Response r = ((WebApplicationException) ex).getResponse();
-                if (r != null) {
-                    if (r.getEntity() != null && r.getEntity() instanceof InputStream) {
-                        outMess = new java.util.Scanner((InputStream) r.getEntity(), "UTF-8").useDelimiter("\\A").next();
+            Response r = ex.getResponse();
+            if (r != null && r.getEntity() != null) {
+                outMess = r.readEntity(String.class);
+            }
+            if (ex instanceof ClientErrorException && r instanceof ResponseImpl) {
+                Message m = ((ResponseImpl) r).getOutMessage();
+                if (m != null) {
+                    if (m.get("org.apache.cxf.request.uri") != null) {
+                        outMess += System.lineSeparator() + "Request URI: "  + m.get("org.apache.cxf.request.uri");
                     }
                 }
-                responseStatus = ((WebApplicationException) ex).getResponse().getStatus();
+            }
+
+            responseStatus = ((WebApplicationException) ex).getResponse().getStatus();
 
         } catch (Throwable ex_) {
             LOG.log(Level.SEVERE, "error on getting  addinional exception info", ex_);
