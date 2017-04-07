@@ -35,6 +35,10 @@ import ru.ilb.common.jpa.annotations.AutoPopulableRepository;
  * 2. Add @AutoPopulableRepository annotation to JPA Repository
  * 3. Add static entity instances to JPA Repository, e.g.
  * public static PointType OFFICE = new PointType(1L, PointTypeCode.OFFICE, "Office");
+ * 
+ * Entity design: Specify unique constraint, equals and hashCode on unique identifier field,
+ * use @Enumerated(EnumType.STRING) for enum field.
+ * Create constructor for all fields or use fluent api.
  * @author slavb
  */
 @Component
