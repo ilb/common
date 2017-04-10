@@ -15,7 +15,6 @@
  */
 package ru.ilb.common.jaxrs.exceptionhandler;
 
-import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
@@ -40,8 +39,8 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
     public Response toResponse(WebApplicationException ex) {
         int responseStatus = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
         String outMess = ex.getMessage();
+        Response r = ex.getResponse();
         try {
-            Response r = ex.getResponse();
             if (r != null && r.getEntity() != null) {
                 outMess = r.readEntity(String.class);
             }
@@ -49,12 +48,12 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
                 Message m = ((ResponseImpl) r).getOutMessage();
                 if (m != null) {
                     if (m.get("org.apache.cxf.request.uri") != null) {
-                        outMess += System.lineSeparator() + "Request URI: "  + m.get("org.apache.cxf.request.uri");
+                        outMess += System.lineSeparator() + "Request URI: " + m.get("org.apache.cxf.request.uri");
                     }
                 }
             }
 
-            responseStatus = ((WebApplicationException) ex).getResponse().getStatus();
+            responseStatus = ex.getResponse().getStatus();
 
         } catch (Throwable ex_) {
             LOG.log(Level.SEVERE, "error on getting  addinional exception info", ex_);
@@ -63,8 +62,12 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
             outMess = ex.toString();
         }
         LOG.log(Level.WARNING, outMess, ex);
+        Response.StatusType status = Response.Status.fromStatusCode(responseStatus);
+        if(status==null) {
+            status = new CustomResponseStatus(responseStatus,outMess);
+        }
 
-        return Response.status(responseStatus).entity(outMess).type(MediaType.TEXT_PLAIN).build();
+        return Response.status(status).entity(outMess).type(MediaType.TEXT_PLAIN).build();
 
     }
 
