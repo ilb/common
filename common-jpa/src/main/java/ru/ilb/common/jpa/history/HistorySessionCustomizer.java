@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.persistence.config.SessionCustomizer;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
+import org.eclipse.persistence.history.HistoryPolicy;
 import org.eclipse.persistence.sessions.Session;
 import org.springframework.core.annotation.AnnotationUtils;
 
@@ -32,12 +33,24 @@ public class HistorySessionCustomizer implements SessionCustomizer {
 
     @Override
     public void customize(Session session) throws Exception {
-        HistoryCustomizer hc = new HistoryCustomizer();
 
         List<ClassDescriptor> descriptors = session.getDescriptors().values().stream()
                 .filter(d -> AnnotationUtils.getAnnotation(d.getJavaClass(), AutoHistory.class) != null)
                 .collect(Collectors.toList());
-        descriptors.stream().forEach(d -> hc.customize(d));
+        descriptors.stream().forEach(d -> customize(session,d));
+    }
+    private void customize(Session session,ClassDescriptor descriptor) {
+        HistoryPolicy policy = new HistoryPolicy();
+        String primaryTable = descriptor.getTableName();
+        if(primaryTable==null){
+            Class parentClass=descriptor.getInheritancePolicy().getParentClass();
+            ClassDescriptor parentDescriptor = session.getClassDescriptor(parentClass);
+            primaryTable = parentDescriptor.getTableName();
+        }
+        policy.addStartFieldName(primaryTable + ".ROWSTART");
+        policy.addEndFieldName(primaryTable + ".ROWEND");
+        policy.addHistoryTableName(primaryTable, primaryTable + "HIST");
+        descriptor.setHistoryPolicy(policy);
     }
 
 }
