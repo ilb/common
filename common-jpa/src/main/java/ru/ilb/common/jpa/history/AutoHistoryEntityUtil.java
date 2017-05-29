@@ -203,10 +203,17 @@ public class AutoHistoryEntityUtil {
      */
     private DatabaseMapping convertMapping(DirectToFieldMapping src) {
         DirectToFieldMapping mapping = new DirectToFieldMapping();
+        if(java.time.LocalDate.class.equals(src.getAttributeClassification())){
+            mapping.setAttributeClassification(java.sql.Date.class);
+        }else if(java.time.LocalDateTime.class.equals(src.getAttributeClassification())){
+            mapping.setAttributeClassification(java.sql.Timestamp.class);
+        }else if(java.util.UUID.class.equals(src.getAttributeClassification())){
+            mapping.setAttributeClassification(java.sql.Blob.class);
+        }else{
+            mapping.setAttributeClassification(src.getAttributeClassification());
+        }
         mapping.setAttributeName(src.getAttributeName());
         mapping.setFieldName(src.getField().getName());
-        mapping.setAttributeClassification(src.getAttributeClassification());
-
         return mapping;
 
     }
