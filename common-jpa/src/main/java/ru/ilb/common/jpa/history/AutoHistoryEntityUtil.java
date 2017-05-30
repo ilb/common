@@ -175,7 +175,13 @@ public class AutoHistoryEntityUtil {
                 .map(m -> convertMapping(m))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        mappings.forEach(m -> builder.addMapping(m));
+        for(DatabaseMapping m : mappings){
+            if(DirectToFieldMapping.class.equals(m.getClass())){
+                builder.addDirectMapping(m.getAttributeName(), m.getAttributeClassification(), m.getField().getName());
+            }else{
+                builder.addMapping(m);
+            }
+        }
 
         return builder.getType();
     }
