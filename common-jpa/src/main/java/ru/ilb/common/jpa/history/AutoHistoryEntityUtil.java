@@ -170,10 +170,8 @@ public class AutoHistoryEntityUtil {
 
         idxRowEnd.addField("ROWEND");
         builder.getType().getDescriptor().getTables().get(0).getIndexes().add(idxRowEnd);
-        Class superClass = descriptor.getJavaClass().getSuperclass();
-        if(superClass != null && !Object.class.equals(superClass)){
-            builder.addDirectMapping("dType", java.lang.String.class, "DTYPE");
-        }
+        //добавляем поле DTYPE, для существующих и будущих потомков
+        builder.addDirectMapping("dType", java.lang.String.class, "DTYPE");
         List<DatabaseMapping> mappings = descriptor.getMappings().stream()
                 .map(m -> convertMapping(m))
                 .filter(Objects::nonNull)
