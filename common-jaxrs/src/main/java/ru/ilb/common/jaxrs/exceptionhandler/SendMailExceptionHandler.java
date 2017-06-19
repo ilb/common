@@ -99,7 +99,7 @@ public class SendMailExceptionHandler implements ExceptionMapper<Exception> {
             int line2 = trace.indexOf("\n");
             mailMsg = "To: " + mailTo + "\n" //From header sendmail should generate
                     + "Subject: " + mailSubject + " " + threadid + "\n"
-                    + "Content-Type: " + MediaType.TEXT_PLAIN + "\n\n"
+                    + "Content-Type: " + MediaType.TEXT_PLAIN + "; charset=UTF-8\n\n"
                     + cause + ": " + outMess + "\n"
                     + " " + threadid + " " + uuid + "\n"
                     + (line2 < 0 ? trace : trace.substring(line2 + 1));
