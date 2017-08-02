@@ -51,9 +51,9 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
                         outMess += System.lineSeparator() + "Request URI: " + m.get("org.apache.cxf.request.uri");
                     }
                 }
+            } else {
+                responseStatus = ex.getResponse().getStatus(); // клиентские статусы не передаем напрямую
             }
-
-            responseStatus = ex.getResponse().getStatus();
 
         } catch (Throwable ex_) {
             LOG.log(Level.SEVERE, "error on getting  addinional exception info", ex_);
@@ -63,11 +63,12 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
         }
         LOG.log(Level.WARNING, outMess, ex);
         Response.StatusType status = Response.Status.fromStatusCode(responseStatus);
-        if(status==null) {
-            status = new CustomResponseStatus(responseStatus,outMess);
+        String outMessClient = responseStatus >= Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ? "Internal server error" : outMess;
+        if (status == null) {
+            status = new CustomResponseStatus(responseStatus, outMessClient);
         }
 
-        return Response.status(status).entity(outMess).type(MediaType.TEXT_PLAIN).build();
+        return Response.status(status).entity(outMessClient).type(MediaType.TEXT_PLAIN).build();
 
     }
 
