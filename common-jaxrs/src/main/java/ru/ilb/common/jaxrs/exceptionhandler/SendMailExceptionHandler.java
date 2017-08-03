@@ -82,7 +82,7 @@ public class SendMailExceptionHandler implements ExceptionMapper<Exception> {
         String mailMsg = getMailMsg(ex, outMess);
         sendMailCheck(mailMsg);
 
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(outMess).type(MediaType.TEXT_PLAIN).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(outMess).header("Content-Type", MediaType.TEXT_PLAIN + ";charset=UTF-8").build();
     }
 
     private String getMailMsg(Exception ex, String outMess) {
