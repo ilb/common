@@ -68,7 +68,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
             status = new CustomResponseStatus(responseStatus, outMessClient);
         }
 
-        return Response.status(status).entity(outMessClient).type(MediaType.TEXT_PLAIN).build();
+        return Response.status(status).entity(outMessClient).header("Content-Type", MediaType.TEXT_PLAIN + ";charset=UTF-8").build();
 
     }
 

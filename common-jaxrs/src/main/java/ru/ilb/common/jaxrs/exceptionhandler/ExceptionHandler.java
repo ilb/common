@@ -36,7 +36,7 @@ public class ExceptionHandler implements ExceptionMapper<Exception>{
         }
         LOG.log(Level.SEVERE, outMess, ex);
 
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(outMess).type(MediaType.TEXT_PLAIN).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(outMess).header("Content-Type", MediaType.TEXT_PLAIN + ";charset=UTF-8").build();
 
     }
 

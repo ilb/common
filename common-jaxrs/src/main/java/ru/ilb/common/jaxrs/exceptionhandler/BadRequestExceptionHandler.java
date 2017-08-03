@@ -43,7 +43,7 @@ public class BadRequestExceptionHandler implements ExceptionMapper<BadRequestExc
         }
         LOG.log(Level.WARNING, outMess, ex);
 
-        return Response.status(Response.Status.BAD_REQUEST).entity(outMess).type(MediaType.TEXT_PLAIN).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(outMess).header("Content-Type", MediaType.TEXT_PLAIN + ";charset=UTF-8").build();
 
     }
 
