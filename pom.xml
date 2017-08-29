@@ -12,6 +12,7 @@
         <module>common-jaxb</module>
         <module>common-jaxrs</module>
         <module>common-jpa</module>
+        <module>common-jpa-jaxb</module>
     </modules>
     <licenses>
         <license>
