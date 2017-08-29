@@ -14,7 +14,6 @@ import org.eclipse.persistence.mappings.OneToOneMapping;
 import org.eclipse.persistence.sessions.Session;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
-import ru.ilb.common.jpa.jaxb.EclipseLinkUtils;
 
 /**
  *

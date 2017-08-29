@@ -19,6 +19,7 @@ package ru.ilb.common.jpa.jaxb;
 //import com.sun.xml.bind.AccessorFactoryImpl;
 //import com.sun.xml.bind.api.AccessorException;
 //import com.sun.xml.bind.v2.runtime.reflect.Accessor;
+import ru.ilb.common.jpa.tools.EclipseLinkUtils;
 import com.sun.xml.internal.bind.AccessorFactory;
 import com.sun.xml.internal.bind.AccessorFactoryImpl;
 import com.sun.xml.internal.bind.api.AccessorException;
