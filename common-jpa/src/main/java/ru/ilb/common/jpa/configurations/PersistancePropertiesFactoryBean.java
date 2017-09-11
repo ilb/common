@@ -49,6 +49,21 @@ import org.springframework.beans.factory.FactoryBean;
  *      <property name="data" value="META-INF/sql/data.sql"/>
  * }</pre>
  * <p>
+ * После этого данный <tt>bean</tt> прописать как <tt>property</tt> в
+ * LocalContainerEntityManagerFactoryBean. Должно получится примерно так:
+ * <pre>{@code
+ *      <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" >
+ *          <property name="persistenceXmlLocation" value="classpath*:META-INF/persistence.xml"></property>
+ *          <property name="jpaPropertyMap" ref="jpaPropertyMap"/>
+ *      </bean>
+ *      <jee:jndi-lookup id="dataSource" jndi-name="jdbc/*наименование вашей БД*"/>
+ *      <bean id="jpaPropertyMap" class="ru.ilb.common.jpa.configurations.PersistancePropertiesFactoryBean">
+ *          <property name="dataSource" ref="dataSource"/>
+ *          <property name="model" value="META-INF/model.jpa"/>
+ *          <property name="data" value="META-INF/sql/data.sql"/>
+ *      </bean>
+ * }</pre>
+ * <p>
  * По данным файлам будут устанавливаться соответствующие <tt>JpaProperty</tt>,
  * но только если в этих файлах что-то было изменено. То, что файл был изменен,
  * определяем через чек сумму файла(md5).
