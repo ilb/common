@@ -49,9 +49,18 @@ import org.springframework.beans.factory.FactoryBean;
  *      <property name="data" value="META-INF/sql/data.sql"/>
  * }</pre>
  * <p>
- * По данным файлам будут устанавливаться соответствующие JpaProperty, но только
- * если в этих файлах что-то было изменено. То, что файл был изменен, определяем
- * через чек сумму файла(md5).
+ * По данным файлам будут устанавливаться соответствующие <tt>JpaProperty</tt>,
+ * но только если в этих файлах что-то было изменено. То, что файл был изменен,
+ * определяем через чек сумму файла(md5).
+ * <p>
+ * При этом соответствующие <tt>JpaProperty</tt> должны быть отключены для
+ * данной БД. Например, в <i>persistence.xml</i> закомментировать данные строки:
+ * <p>
+ * Для model:
+ * <pre>{@code <property name="javax.persistence.schema-generation.database.action" value="create-or-extend-tables"/>}</pre>
+ * <p>
+ * Для data:
+ * <pre>{@code <property name="javax.persistence.sql-load-script-source" value="META-INF/sql/data.sql"/>}</pre>
  * <p>
  * Это сделано для того чтобы уменьшить время деплоя проекта.
  *
@@ -225,4 +234,3 @@ public class PersistancePropertiesFactoryBean implements FactoryBean<Map> {
     }
 
 }
-
