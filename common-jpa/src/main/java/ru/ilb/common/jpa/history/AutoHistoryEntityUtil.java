@@ -16,16 +16,12 @@
 package ru.ilb.common.jpa.history;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Vector;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
@@ -177,31 +173,31 @@ public class AutoHistoryEntityUtil {
         idxRowEnd.addField("ROWEND");
         builder.getType().getDescriptor().getTables().get(0).getIndexes().add(idxRowEnd);
         //добавляем поле DTYPE, для существующих и будущих потомков
-        Vector<DatabaseField> fields = descriptor.getFields();
+        List<DatabaseField> fields = descriptor.getFields();
         Set<String> fieldNames = new HashSet();
-        fields.stream().filter(f -> !f.getName().endsWith("_ID")).forEach(f -> fieldNames.add(f.getName()));
+        fields.stream().forEach(f -> fieldNames.add(f.getName()));
         List<DatabaseMapping> mappings = descriptor.getMappings().stream()
                 .map(m -> convertMapping(m))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        for(DatabaseMapping m : mappings){
-            if(m.getAttributeName()!=null && fieldNames.contains(m.getAttributeName().toUpperCase())){
-                fieldNames.remove(m.getField().getName());
-            }
-            if(DirectToFieldMapping.class.equals(m.getClass())){
+        mappings.forEach((m) -> {
+            if (DirectToFieldMapping.class.equals(m.getClass())) {
                 builder.addDirectMapping(m.getAttributeName(), m.getAttributeClassification(), m.getField().getName());
-            }else{
+                fieldNames.remove(m.getField().getName());
+            } else {
+                if (OneToOneMapping.class.equals(m.getClass())) {
+                    OneToOneMapping oom = (OneToOneMapping) m;
+                    oom.getSourceToTargetKeyFields().entrySet().stream().filter(entr -> fieldNames.contains(entr.getKey().getName())).forEach(entr -> fieldNames.remove(entr.getKey().getName()));
+                }
                 builder.addMapping(m);
             }
-        }
+        });
         
         if(!fieldNames.isEmpty()){
-            for(DatabaseField df : fields){
-                if(fieldNames.contains(df.getName())){
-                    //каждому DTYPE устанавливаем его тип
-                    builder.addDirectMapping(df.getName().toLowerCase(), df.getType(), df.getName());
-                }
-            }
+            fields.stream().filter((df) -> (fieldNames.contains(df.getName()))).forEachOrdered((df) -> {
+                //каждому DTYPE устанавливаем его тип
+                builder.addDirectMapping(df.getName().toLowerCase(), df.getType(), df.getName());
+            });
         }
         return builder.getType();
     }
