@@ -53,9 +53,8 @@ public class RepositoryPopulator {
                 .stream().forEach(repository -> populateRepository((JpaRepository) repository));
 
     }
-
-    public void populateRepository(JpaRepository repository) {
-        Class repositoryInterface = (Class) repository.getClass().getGenericInterfaces()[0];
+    
+    public static List getEntities(Class repositoryInterface) {
         ParameterizedType baseInterface = ((ParameterizedType) repositoryInterface.getGenericInterfaces()[0]);
         Type objectType = baseInterface.getActualTypeArguments()[0];
 
@@ -65,7 +64,11 @@ public class RepositoryPopulator {
                 .filter(field -> field.getGenericType().equals(objectType))
                 .map(field -> getFieldValue(field))
                 .collect(Collectors.toList());
-        repository.save(objects);
+        return objects;
+    }
+
+    public void populateRepository(JpaRepository repository) {
+        repository.save(getEntities((Class) repository.getClass().getGenericInterfaces()[0]));
     }
 
     private static Object getFieldValue(Field field) {
