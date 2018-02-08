@@ -32,14 +32,11 @@ public class MapParamConverterProvider implements ParamConverterProvider {
     private final Map< Class< ?>, ParamConverter< ?>> converters = new HashMap<>();
 
     public MapParamConverterProvider() {
-        try {
-            this.converters.put(java.util.Date.class, (ParamConverter< ?>) ru.ilb.common.jaxrs.converters.DateParamConverter.class.newInstance());
-            this.converters.put(java.time.LocalDate.class, (ParamConverter< ?>) ru.ilb.common.jaxrs.converters.LocalDateParamConverter.class.newInstance());
-        } catch (InstantiationException | IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        }
+        this.converters.put(java.util.Date.class, new ru.ilb.common.jaxrs.converters.DateParamConverter());
+        this.converters.put(java.time.LocalDate.class, new ru.ilb.common.jaxrs.converters.LocalDateParamConverter());
+        this.converters.put(java.time.LocalDateTime.class, new ru.ilb.common.jaxrs.converters.LocalDateTimeParamConverter());
     }
-    
+
     public void setConverters(Map<Class, Class> converters) {
         try {
             for (Map.Entry<Class, Class> entry : converters.entrySet()) {
