@@ -44,6 +44,7 @@ public class BitAccessor {
             }
             c = c.getSuperclass();
         }
+
         return null;
     }
 
