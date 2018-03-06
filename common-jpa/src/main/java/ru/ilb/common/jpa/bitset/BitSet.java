@@ -18,6 +18,7 @@ import java.util.List;
 public class BitSet<T> implements Serializable {
 
     protected Long value;
+
     private final BitAccessor accessor;
 
     public BitSet() {
@@ -29,10 +30,16 @@ public class BitSet<T> implements Serializable {
         this.value = value;
     }
 
+    public BitSet(List<T> items) {
+        accessor = new BitAccessor(getParamClass(0));
+        addAll(items);
+    }
+
     /**
      * Получить параметры generic-класса
+     *
      * @param pos
-     * @return 
+     * @return Class
      */
     private Class<T> getParamClass(int pos) {
         return (Class<T>) ((ParameterizedType) getClass()
@@ -51,6 +58,7 @@ public class BitSet<T> implements Serializable {
     public boolean contains(T item) {
         return isSetBit(accessor.getBitNum(item));
     }
+
 //    public boolean remove(T item) {
 //        Long bitNum = accessor.getBitNum(item);
 //        boolean res = isSetBit(bitNum);
@@ -62,24 +70,50 @@ public class BitSet<T> implements Serializable {
         setBit(accessor.getBitNum(item));
     }
 
-    private Long setBit(long pos) {
+    public void addAll(List<T> items) {
+        items.forEach((item) -> {
+            setBit(accessor.getBitNum(item));
+        });
+    }
+
+    /**
+     * Включение конкретного бита
+     *
+     * @param pos
+     * @return
+     */
+    public Long setBit(long pos) {
         if (value == null) {
             value = 0L;
         }
-        return value | (1 << pos);
+        value = value | (1L << pos);
+
+        return value;
     }
 
+    /**
+     * Проверить на вхождения бита
+     *
+     * @param pos
+     * @return boolean
+     */
     private boolean isSetBit(long pos) {
         return value != null && ((value >> pos) & 1) != 0L;
     }
 
-    private List<Long> getSetBits() {
+    /**
+     * Список включенных битов
+     *
+     * @return List
+     */
+    public List<Long> getSetBits() {
         List<Long> res = new ArrayList<>();
         for (long pos = 0; pos < 64; pos++) {
             if (isSetBit(pos)) {
                 res.add(pos);
             }
         }
+
         return res;
     }
 
