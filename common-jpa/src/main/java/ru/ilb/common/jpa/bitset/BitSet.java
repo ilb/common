@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -30,7 +31,7 @@ public class BitSet<T> implements Serializable {
         this.value = value;
     }
 
-    public BitSet(List<T> items) {
+    public BitSet(Set<T> items) {
         accessor = new BitAccessor(getParamClass(0));
         addAll(items);
     }
@@ -70,7 +71,7 @@ public class BitSet<T> implements Serializable {
         setBit(accessor.getBitNum(item));
     }
 
-    public void addAll(List<T> items) {
+    public void addAll(Set<T> items) {
         items.forEach((item) -> {
             setBit(accessor.getBitNum(item));
         });
