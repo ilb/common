@@ -15,12 +15,11 @@
  */
 package ru.ilb.common.jpa.bitset;
 
-/**
- *
- * @author slavb
- */
-public interface BitAccessor {
+public class EnumBitAccessor implements BitAccessor {
 
-    Long getBitNum(Object o);
-    
+    @Override
+    public Long getBitNum(Object o) {
+        return o == null ? null : Long.valueOf(((java.lang.Enum) o).ordinal());
+    }
+
 }

@@ -8,13 +8,47 @@ package ru.ilb.common.jpa.bitset;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
- *
+ * Store Sets as bit field
+ * 
+ * To use, need to define class, extending BitSet:
+ * public class CreateOptionsSet extends BitSet&lt;CreateOptions> {
+ * 
+ *     public CreateOptionsSet() {
+ *     }
+ * 
+ *     public CreateOptionsSet(Long value) {
+ *         super(value);
+ *     }
+ * 
+ *     public CreateOptionsSet(Collection&lt;CreateOptions> items) {
+ *         super(items);
+ *     }
+ * }
+ * define AttributeConverter and include in persistance.xml:
+ * <pre>
+ * {@code
+ * @Converter(autoApply = true)
+ * public class CreateOptionsConverter implements AttributeConverter<CreateOptionsSet, Long> {
+ * 
+ *     @Override
+ *     public Long convertToDatabaseColumn(CreateOptionsSet attribute) {
+ *         return attribute == null ? null : attribute.getValue();
+ *     }
+ * 
+ *     @Override
+ *     public CreateOptionsSet convertToEntityAttribute(Long dbData) {
+ *         return dbData == null ? null : new CreateOptionsSet(dbData);
+ *     }
+ * 
+ * }
+ * }
+ * </pre> 
  * @author slavb
- * @param <T> тип хранимого значения
+ * @param <T> stored object type
  */
 public class BitSet<T> implements Serializable {
 
@@ -23,16 +57,18 @@ public class BitSet<T> implements Serializable {
     private final BitAccessor accessor;
 
     public BitSet() {
-        accessor = new BitAccessor(getParamClass(0));
+        Class<T> clazz = getParamClass(0);
+        
+        accessor = clazz.isEnum() ? new EnumBitAccessor() : new EntityBitAccessor(clazz);
     }
 
     public BitSet(Long value) {
-        accessor = new BitAccessor(getParamClass(0));
+        this();
         this.value = value;
     }
 
-    public BitSet(Set<T> items) {
-        accessor = new BitAccessor(getParamClass(0));
+    public BitSet(Collection<T> items) {
+        this();
         addAll(items);
     }
 
@@ -71,7 +107,7 @@ public class BitSet<T> implements Serializable {
         setBit(accessor.getBitNum(item));
     }
 
-    public void addAll(Set<T> items) {
+    final public void addAll(Collection<T> items) {
         items.forEach((item) -> {
             setBit(accessor.getBitNum(item));
         });
