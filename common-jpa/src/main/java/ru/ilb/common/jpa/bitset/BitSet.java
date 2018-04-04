@@ -10,6 +10,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Store Sets as bit field
@@ -72,6 +73,31 @@ public class BitSet<T> implements Serializable {
         addAll(items);
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.value);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BitSet<?> other = (BitSet<?>) obj;
+        if (!Objects.equals(this.value, other.value)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Получить параметры generic-класса
      *
@@ -119,7 +145,7 @@ public class BitSet<T> implements Serializable {
      * @param pos
      * @return
      */
-    public Long setBit(long pos) {
+    private Long setBit(int pos) {
         if (value == null) {
             value = 0L;
         }
@@ -134,7 +160,7 @@ public class BitSet<T> implements Serializable {
      * @param pos
      * @return boolean
      */
-    private boolean isSetBit(long pos) {
+    private boolean isSetBit(int pos) {
         return value != null && ((value >> pos) & 1) != 0L;
     }
 
@@ -143,9 +169,9 @@ public class BitSet<T> implements Serializable {
      *
      * @return List
      */
-    public List<Long> getSetBits() {
-        List<Long> res = new ArrayList<>();
-        for (long pos = 0; pos < 64; pos++) {
+    public List<Integer> getSetBits() {
+        List<Integer> res = new ArrayList<>();
+        for (int pos = 0; pos < 64; pos++) {
             if (isSetBit(pos)) {
                 res.add(pos);
             }

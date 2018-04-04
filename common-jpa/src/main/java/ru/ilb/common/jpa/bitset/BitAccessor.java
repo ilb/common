@@ -21,6 +21,6 @@ package ru.ilb.common.jpa.bitset;
  */
 public interface BitAccessor {
 
-    Long getBitNum(Object o);
+    int getBitNum(Object o);
     
 }
