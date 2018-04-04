@@ -22,14 +22,14 @@ public class EntityBitAccessor implements BitAccessor {
     }
 
     @Override
-    public Long getBitNum(Object o) {
-        return getId(o) - 1;
+    public int getBitNum(Object o) {
+        return getId(o).intValue() - 1;
     }
 
     private Long getId(Object o) {
         try {
             return (Long) idField.get(o);
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
+        } catch (Throwable ex) {
             return null;
         }
     }

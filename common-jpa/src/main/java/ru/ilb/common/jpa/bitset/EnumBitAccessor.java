@@ -18,8 +18,8 @@ package ru.ilb.common.jpa.bitset;
 public class EnumBitAccessor implements BitAccessor {
 
     @Override
-    public Long getBitNum(Object o) {
-        return o == null ? null : Long.valueOf(((java.lang.Enum) o).ordinal());
+    public int getBitNum(Object o) {
+        return o == null ? null : ((java.lang.Enum) o).ordinal();
     }
 
 }

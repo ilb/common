@@ -54,6 +54,9 @@ public class RepositoryPopulator {
 
     }
     
+    public static <T> List<T> getEntities(Class repositoryInterface, Class<T> clazz) {
+        return getEntities(repositoryInterface);
+    }
     public static List getEntities(Class repositoryInterface) {
         ParameterizedType baseInterface = ((ParameterizedType) repositoryInterface.getGenericInterfaces()[0]);
         Type objectType = baseInterface.getActualTypeArguments()[0];
