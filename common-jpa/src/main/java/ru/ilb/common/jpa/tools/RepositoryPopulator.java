@@ -27,18 +27,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import ru.ilb.common.jpa.annotations.AutoPopulableRepository;
+import ru.ilb.common.jpa.repository.CacheableJpaRepository;
 
 /**
- * Automate JPA-repository population by public static object instances
- * Usage: 
- * 1. Register &lt;bean class="ru.ilb.common.jpa.tools.RepositoryPopulator"/>
- * 2. Add @AutoPopulableRepository annotation to JPA Repository
- * 3. Add static entity instances to JPA Repository, e.g.
- * public static PointType OFFICE = new PointType(1L, PointTypeCode.OFFICE, "Office");
- * 
- * Entity design: Specify unique constraint, equals and hashCode on unique identifier field,
- * use @Enumerated(EnumType.STRING) for enum field.
- * Create constructor for all fields or use fluent api.
+ * Automate JPA-repository population by public static object instances Usage:
+ * 1. Register &lt;bean class="ru.ilb.common.jpa.tools.RepositoryPopulator"/> 2.
+ * Add @AutoPopulableRepository annotation to JPA Repository 3. Add static
+ * entity instances to JPA Repository, e.g. public static PointType OFFICE = new
+ * PointType(1L, PointTypeCode.OFFICE, "Office");
+ *
+ * Entity design: Specify unique constraint, equals and hashCode on unique
+ * identifier field, use @Enumerated(EnumType.STRING) for enum field. Create
+ * constructor for all fields or use fluent api.
+ *
  * @author slavb
  */
 @Component
@@ -53,15 +54,16 @@ public class RepositoryPopulator {
                 .stream().forEach(repository -> populateRepository((JpaRepository) repository));
 
     }
-    
+
     public static <T> List<T> getEntities(Class repositoryInterface, Class<T> clazz) {
         return getEntities(repositoryInterface);
     }
+
     public static List getEntities(Class repositoryInterface) {
         ParameterizedType baseInterface = ((ParameterizedType) repositoryInterface.getGenericInterfaces()[0]);
         Type objectType = baseInterface.getActualTypeArguments()[0];
 
-        //JpaRepository repository = applicationContext.getBean(repositoryClass);
+        //List of static fields with entity instances
         List objects = Arrays.stream(repositoryInterface.getDeclaredFields())
                 .filter(field -> java.lang.reflect.Modifier.isStatic(field.getModifiers()))
                 .filter(field -> field.getGenericType().equals(objectType))
@@ -71,7 +73,12 @@ public class RepositoryPopulator {
     }
 
     public void populateRepository(JpaRepository repository) {
-        repository.save(getEntities((Class) repository.getClass().getGenericInterfaces()[0]));
+        List entities = getEntities((Class) repository.getClass().getGenericInterfaces()[0]);
+        entities = repository.save(entities);
+        // populate cache
+        if (repository instanceof CacheableJpaRepository) {
+            ((CacheableJpaRepository) repository).fillCache(entities);
+        }
     }
 
     private static Object getFieldValue(Field field) {
