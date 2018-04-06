@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.BitSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Store Sets as bit field
@@ -134,6 +135,15 @@ public class BigBitSet<T> implements Serializable {
         Boolean res = items.stream().map(this::contains).reduce((c1, c2) -> c1 && c2).orElse(Boolean.FALSE);
         return res;
     }
+
+    public boolean containsAny(Collection<T> items) {
+        //optimize this
+        return items.stream().map(this::contains).reduce((c1, c2) -> c1 || c2).orElse(Boolean.FALSE);
+    }
+    public boolean containsAny(T... items) {
+        //optimize this
+        return  Stream.of(items).map(this::contains).reduce((c1, c2) -> c1 || c2).orElse(Boolean.FALSE);
+    }    
 
     public boolean remove(T item) {
 
