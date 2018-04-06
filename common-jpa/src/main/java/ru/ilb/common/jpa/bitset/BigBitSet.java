@@ -155,9 +155,12 @@ public class BigBitSet<T> implements Serializable {
     }
 
     final public void addAll(Collection<T> items) {
-        items.forEach((item) -> add(item));
+        items.forEach(this::add);
     }
 
+    public void removeAll(Collection<T> items) {
+        items.forEach(this::remove);
+    }
 
     /**
      * Список включенных битов
