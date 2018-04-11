@@ -30,18 +30,18 @@ import java.util.stream.Stream;
  * <pre>
  * {@code
  * @Converter(autoApply = true)
- * public class CreateOptionsConverter implements AttributeConverter<CreateOptionsSet, Long> {
- *
+ * public class ApplicationFactConverter implements AttributeConverter<ApplicationFactSet, byte[]> {
+ * 
  *     @Override
- *     public Long convertToDatabaseColumn(CreateOptionsSet attribute) {
- *         return attribute == null ? null : attribute.getValue();
+ *     public byte[] convertToDatabaseColumn(ApplicationFactSet attribute) {
+ *         return attribute == null ? null : attribute.toByteArray();
  *     }
- *
+ * 
  *     @Override
- *     public CreateOptionsSet convertToEntityAttribute(Long dbData) {
- *         return dbData == null ? null : new CreateOptionsSet(dbData);
+ *     public ApplicationFactSet convertToEntityAttribute(byte[] dbData) {
+ *         return dbData == null ? null : new ApplicationFactSet(dbData);
  *     }
- *
+ * 
  * }
  * }
  * </pre>
