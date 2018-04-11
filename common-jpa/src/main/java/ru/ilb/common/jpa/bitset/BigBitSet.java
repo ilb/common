@@ -20,12 +20,12 @@ import java.util.stream.Stream;
  *
  * To use, need to define class, extending BitSet: public class CreateOptionsSet
  * extends BitSet&lt;CreateOptions> {
- *
- * public CreateOptionsSet() { }
- *
- * public CreateOptionsSet(Long value) { super(value); }
- *
- * public CreateOptionsSet(Collection&lt;CreateOptions> items) { super(items); }
+
+ public CreateOptionsSet() { }
+
+ public CreateOptionsSet(Long bitSet) { super(bitSet); }
+
+ public CreateOptionsSet(Collection&lt;CreateOptions> items) { super(items); }
  * } define AttributeConverter and include in persistance.xml:
  * <pre>
  * {@code
@@ -52,14 +52,14 @@ import java.util.stream.Stream;
 public class BigBitSet<T> implements Serializable {
 
 //    protected int MAX_BIT_LENGTH = 128;
-    protected BitSet value;
+    protected BitSet bitSet;
 
     private final BitAccessor accessor;
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 29 * hash + Objects.hashCode(this.value);
+        hash = 29 * hash + Objects.hashCode(this.bitSet);
         return hash;
     }
 
@@ -75,7 +75,7 @@ public class BigBitSet<T> implements Serializable {
             return false;
         }
         final BigBitSet<?> other = (BigBitSet<?>) obj;
-        if (!Objects.equals(this.value, other.value)) {
+        if (!Objects.equals(this.bitSet, other.bitSet)) {
             return false;
         }
         return true;
@@ -87,13 +87,13 @@ public class BigBitSet<T> implements Serializable {
         accessor = clazz.isEnum() ? new EnumBitAccessor() : new EntityBitAccessor(clazz);
     }
 
-    public BigBitSet(BitSet value) {
+    public BigBitSet(BitSet bitSet) {
         this();
-        this.value = value;
+        this.bitSet = bitSet;
     }
     public BigBitSet(byte[] value) {
         this();
-        this.value = BitSet.valueOf(value);
+        this.bitSet = BitSet.valueOf(value);
     }
     
 
@@ -114,21 +114,21 @@ public class BigBitSet<T> implements Serializable {
                 .getActualTypeArguments()[pos];
     }
 
-    public BitSet getValue() {
-        return this.value;
+    public BitSet getBitSet() {
+        return this.bitSet;
     }
     
     public byte[] toByteArray() {
-        return value!=null ? value.toByteArray() : null;
+        return bitSet!=null ? bitSet.toByteArray() : null;
     }
     
 
-    public void setValue(BitSet value) {
-        this.value = value;
+    public void setBitSet(BitSet bitSet) {
+        this.bitSet = bitSet;
     }
 
     public boolean contains(T item) {
-        return value != null && value.get(accessor.getBitNum(item));
+        return bitSet != null && bitSet.get(accessor.getBitNum(item));
     }
 
     public boolean containsAll(Collection<T> items) {
@@ -148,20 +148,27 @@ public class BigBitSet<T> implements Serializable {
     public boolean remove(T item) {
 
         boolean res = false;
-        if (value != null) {
+        if (bitSet != null) {
             int bitNum = accessor.getBitNum(item);
-            res = value.get(bitNum);
-            value.clear(bitNum);
+            res = bitSet.get(bitNum);
+            bitSet.clear(bitNum);
         }
         return res;
     }
 
     public void add(T item) {
-        if (value == null) {
-            value = new BitSet();
+        if (bitSet == null) {
+            bitSet = new BitSet();
         }
         int bitNum = accessor.getBitNum(item);
-        value.set(bitNum);
+        bitSet.set(bitNum);
+    }
+    public void set(T item, boolean value) {
+        if (bitSet == null) {
+            bitSet = new BitSet();
+        }
+        int bitNum = accessor.getBitNum(item);
+        bitSet.set(bitNum, value);
     }
 
     final public void addAll(Collection<T> items) {
@@ -179,7 +186,7 @@ public class BigBitSet<T> implements Serializable {
      */
     public List<Integer> getSetBits() {
         //List<Integer> res = new ArrayList<>();
-        List<Integer> res = value!=null ? value.stream().boxed().collect(Collectors.toList()): new ArrayList<>();
+        List<Integer> res = bitSet!=null ? bitSet.stream().boxed().collect(Collectors.toList()): new ArrayList<>();
         return res;
         //return res;
     }
