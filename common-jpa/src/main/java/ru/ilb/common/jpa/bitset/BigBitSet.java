@@ -135,7 +135,10 @@ public class BigBitSet<T> implements Serializable {
         Boolean res = items.stream().map(this::contains).reduce((c1, c2) -> c1 && c2).orElse(Boolean.FALSE);
         return res;
     }
-
+    public boolean containsAll(T... items) {
+        //optimize this
+        return  Stream.of(items).map(this::contains).reduce((c1, c2) -> c1 && c2).orElse(Boolean.FALSE);
+    }    
     public boolean containsAny(Collection<T> items) {
         //optimize this
         return items.stream().map(this::contains).reduce((c1, c2) -> c1 || c2).orElse(Boolean.FALSE);
