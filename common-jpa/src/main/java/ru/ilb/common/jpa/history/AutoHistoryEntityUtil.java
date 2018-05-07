@@ -41,6 +41,7 @@ import org.eclipse.persistence.tools.schemaframework.DefaultTableGenerator;
 import org.eclipse.persistence.tools.schemaframework.DynamicSchemaManager;
 import org.eclipse.persistence.tools.schemaframework.IndexDefinition;
 import org.eclipse.persistence.tools.schemaframework.TableCreator;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +50,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @author slavb
  */
 public class AutoHistoryEntityUtil {
+    
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AutoHistoryEntityUtil.class);
     
     private final static String SEQ_GEN_HIST_IDENTITY="SEQ_GEN_HIST_IDENTITY";
 
@@ -182,13 +185,16 @@ public class AutoHistoryEntityUtil {
                 .collect(Collectors.toList());
         mappings.forEach((m) -> {
             if (DirectToFieldMapping.class.equals(m.getClass())) {
-                builder.addDirectMapping(m.getAttributeName(), m.getAttributeClassification(), m.getField().getName());
+                LOG.debug("Table "+tableName+" adding DirectToFieldMapping " + m.getAttributeName());
+                //builder.addDirectMapping(m.getAttributeName(), m.getAttributeClassification(), m.getField().getName());
+                builder.addMapping(m);
                 fieldNames.remove(m.getField().getName());
             } else {
                 if (OneToOneMapping.class.equals(m.getClass())) {
                     OneToOneMapping oom = (OneToOneMapping) m;
                     oom.getSourceToTargetKeyFields().entrySet().stream().filter(entr -> fieldNames.contains(entr.getKey().getName())).forEach(entr -> fieldNames.remove(entr.getKey().getName()));
                 }
+                LOG.debug("Table "+tableName+" adding OneToOneMapping " + m.getAttributeName());
                 builder.addMapping(m);
             }
         });
