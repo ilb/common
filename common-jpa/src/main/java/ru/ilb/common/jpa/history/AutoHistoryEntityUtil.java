@@ -86,14 +86,15 @@ public class AutoHistoryEntityUtil {
         List<DynamicType> types = descriptors.stream()
                 .map(descriptor -> createHistoryType(descriptor, dcl))
                 .collect(Collectors.toList());
+        if (!types.isEmpty()) {
+            boolean createMissingTables = false;
+            boolean generateFKConstraints = false;
+            NativeSequence sequence = new NativeSequence(SEQ_GEN_HIST_IDENTITY,true);
+            session.getDatasourcePlatform().addSequence(sequence);
 
-        boolean createMissingTables = false;
-        boolean generateFKConstraints = false;
-        NativeSequence sequence = new NativeSequence(SEQ_GEN_HIST_IDENTITY,true);
-        session.getDatasourcePlatform().addSequence(sequence);
-
-        addTypes(session, createMissingTables, generateFKConstraints, types.toArray(new DynamicType[types.size()]));
-        createTables(session, generateFKConstraints);
+            addTypes(session, createMissingTables, generateFKConstraints, types.toArray(new DynamicType[types.size()]));
+            createTables(session, generateFKConstraints);
+        }
 
     }
 
