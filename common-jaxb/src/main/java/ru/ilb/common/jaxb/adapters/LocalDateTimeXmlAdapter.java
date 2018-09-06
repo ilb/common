@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 slavb.
+ * Copyright 2018 shadrin_nv.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.jaxrs.converters;
+package ru.ilb.common.jaxb.adapters;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -22,17 +22,17 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.TimeZone;
-import javax.ws.rs.ext.ParamConverter;
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  *
- * @author slavb
+ * @author shadrin_nv
  */
-public class LocalDateTimeParamConverter implements ParamConverter<LocalDateTime> {
+public class LocalDateTimeXmlAdapter extends XmlAdapter<String, LocalDateTime> {
 
     @Override
-    public LocalDateTime fromString(String value) {
+    public LocalDateTime unmarshal(String value) throws Exception {
         if (value == null || value.length() == 0) {
             return null;
         }
@@ -56,10 +56,11 @@ public class LocalDateTimeParamConverter implements ParamConverter<LocalDateTime
     }
 
     @Override
-    public String toString(LocalDateTime value) {
+    public String marshal(LocalDateTime value) throws Exception {
         if (value == null) {
             return null;
         }
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(OffsetDateTime.of(value, OffsetDateTime.now().getOffset()));
     }
+
 }
