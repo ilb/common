@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.TimeZone;
 import javax.xml.bind.DatatypeConverter;
@@ -51,8 +52,8 @@ public class LocalDateTimeXmlAdapter extends XmlAdapter<String, LocalDateTime> {
             ZoneId zid = parsedDateTime.getZone() == null ? ZoneId.systemDefault() : parsedDateTime.getZone();
             return LocalDateTime.ofInstant(parsedDateTime.toInstant(), zid);
         } catch (Exception ex) {
+            throw new DateTimeParseException("Text '" + value + "' could not be parsed to LocalDateTime.", value, 0, ex);
         }
-        return null;
     }
 
     @Override
