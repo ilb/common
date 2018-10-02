@@ -19,6 +19,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.List;
+import org.eclipse.persistence.mappings.DatabaseMapping;
 
 /**
  * Репозиторий с автоматическим пополнением базы по значениям в статических полях
@@ -27,7 +29,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AutoPopulableRepository {
+    PopulateMode mode() default PopulateMode.SIMPLE;
+
+    Class<? extends DatabaseMapping>[] mappingTypes() default {};
     
-    
+    public static enum PopulateMode {
+        SIMPLE,
+        FINDALL
+    }
 }
 
