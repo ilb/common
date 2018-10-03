@@ -103,27 +103,16 @@ public class RepositoryPopulator {
 
     public void populateRepository(JpaRepository repository) {
         AutoPopulableRepository annotation = AnnotationUtils.findAnnotation(repository.getClass(), AutoPopulableRepository.class);
+        // repository is proxy class
         List entities = getEntities((Class) repository.getClass().getGenericInterfaces()[0]);
-        switch (annotation.mode()) {
-            case SIMPLE:
-                populateRepositorySimple(repository, annotation, entities);
-                break;
-            case FINDALL:
-                populateRepositoryFindAll(repository, annotation, entities);
-                break;
-        }
+        entities = populateRepositoryMerge(repository, annotation, entities);
         // populate cache
         if (repository instanceof CacheableJpaRepository) {
             ((CacheableJpaRepository) repository).fillCache(entities);
         }
     }
 
-    private List populateRepositorySimple(JpaRepository repository, AutoPopulableRepository annotation, List entities) {
-
-        return repository.save(entities);
-    }
-
-    private List populateRepositoryFindAll(JpaRepository repository, AutoPopulableRepository annotation, List entities) {
+    private List populateRepositoryMerge(JpaRepository repository, AutoPopulableRepository annotation, List entities) {
         if (descriptorUtils == null) {
             throw new IllegalArgumentException("DescriptorUtils bean required for FINDALL mode");
         }
@@ -139,7 +128,7 @@ public class RepositoryPopulator {
             // update existing entity
             if (dstMap.containsKey(pk)) {
                 Object dst = dstMap.get(pk);
-                descriptorUtils.copyProperties(src, dst, annotation.mappingTypes());
+                descriptorUtils.copyProperties(src, dst, annotation.mergeMappingTypes());
                 result.add(dst);
             } else {
                 result.add(repository.save(src));
