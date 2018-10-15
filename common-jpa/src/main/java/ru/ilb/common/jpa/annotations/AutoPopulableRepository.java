@@ -19,15 +19,22 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.eclipse.persistence.mappings.DatabaseMapping;
 
 /**
- * Репозиторий с автоматическим пополнением базы по значениям в статических полях
+ * Auto-populable JPA repository
  * @author slavb
  */
 @Target({ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AutoPopulableRepository {
-    
+
+    /**
+     * Mapping types which should be merged in case of existing entity (e.g. merge only DirectToFieldMapping and no relationships)
+     * If null or empty, all properties merged
+     * @return
+     */
+    Class<? extends DatabaseMapping>[] mergeMappingTypes() default {};
     
 }
 

@@ -18,14 +18,24 @@ package ru.ilb.common.jpa.tools;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import ru.ilb.common.jpa.annotations.AutoPopulableRepository;
 import ru.ilb.common.jpa.repository.CacheableJpaRepository;
 
@@ -46,12 +56,19 @@ import ru.ilb.common.jpa.repository.CacheableJpaRepository;
 public class RepositoryPopulator {
 
     @Autowired
-    ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
+
+    @Autowired(required = false)
+    private DescriptorUtils descriptorUtils;
+
+    @Autowired
+    @Qualifier("transactionManager")
+    private PlatformTransactionManager platformTransactionManager;
 
     @PostConstruct
     public void populateAll() {
         applicationContext.getBeansWithAnnotation(AutoPopulableRepository.class).values()
-                .stream().forEach(repository -> populateRepository((JpaRepository) repository));
+                .stream().forEach(repository -> populateRepositoryInTransaction((JpaRepository) repository));
 
     }
 
@@ -72,13 +89,52 @@ public class RepositoryPopulator {
         return objects;
     }
 
+    public void populateRepositoryInTransaction(JpaRepository repository) {
+        // https://stackoverflow.com/a/26608403
+        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus ts) {
+                populateRepository(repository);
+            }
+        });
+
+    }
+
     public void populateRepository(JpaRepository repository) {
+        AutoPopulableRepository annotation = AnnotationUtils.findAnnotation(repository.getClass(), AutoPopulableRepository.class);
+        // repository is proxy class
         List entities = getEntities((Class) repository.getClass().getGenericInterfaces()[0]);
-        entities = repository.save(entities);
+        entities = populateRepositoryMerge(repository, annotation, entities);
         // populate cache
         if (repository instanceof CacheableJpaRepository) {
             ((CacheableJpaRepository) repository).fillCache(entities);
         }
+    }
+
+    private List populateRepositoryMerge(JpaRepository repository, AutoPopulableRepository annotation, List entities) {
+        if (descriptorUtils == null) {
+            throw new IllegalArgumentException("DescriptorUtils bean required for FINDALL mode");
+        }
+
+        List base = repository.findAll();
+        List result = new ArrayList<>();
+
+        Map<Object, Object> dstMap = descriptorUtils.mapById(base);
+        Iterator<Object> it = entities.iterator();
+        while (it.hasNext()) {
+            Object src = it.next();
+            Object pk = descriptorUtils.getPrimaryKeyValue(src);
+            // update existing entity
+            if (dstMap.containsKey(pk)) {
+                Object dst = dstMap.get(pk);
+                descriptorUtils.copyProperties(src, dst, annotation.mergeMappingTypes());
+                result.add(dst);
+            } else {
+                result.add(repository.save(src));
+            }
+        }
+        return result;
     }
 
     private static Object getFieldValue(Field field) {
