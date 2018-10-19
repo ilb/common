@@ -61,10 +61,15 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
         if (outMess == null || outMess.isEmpty()) {
             outMess = ex.toString();
         }
+
         LOG.log(Level.WARNING, outMess, ex);
         Response.StatusType status = Response.Status.fromStatusCode(responseStatus);
         String outMessClient = responseStatus >= Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ? "Internal server error" : outMess;
-        if (status == null) {
+        if (ex.getCause() instanceof java.lang.IllegalArgumentException
+                && responseStatus == Response.Status.NOT_FOUND.getStatusCode()) {
+            // если 404 из-за не корректно введеного аргумента в URL, то транслируем в 450
+            status = new CustomResponseStatus(450, "Unclassifiable server error");
+        } else if (status == null) {
             status = new CustomResponseStatus(responseStatus, outMessClient);
         }
 
