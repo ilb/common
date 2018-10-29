@@ -35,11 +35,23 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
 
     private static final Logger LOG = Logger.getLogger(WebApplicationExceptionHandler.class.getName());
 
+    private final String UNCLASSIFIABLE_SERVER_ERROR_TEXT = "Unclassifiable server error";
+    private final int CLIENT_WEB_ERROR_START = 450;
+    private final int CLIENT_ERROR_LOW_CODE = 100;
+
     @Override
     public Response toResponse(WebApplicationException ex) {
-        int responseStatus = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
-        String outMess = ex.getMessage();
+        // Код ответа
         Response r = ex.getResponse();
+        int responseStatus;
+        if (r != null) {
+            responseStatus = r.getStatus();
+        } else {
+            responseStatus = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+        }
+
+        // Текст ошибки
+        String outMess = ex.getMessage();
         try {
             if (r != null && r.getEntity() != null) {
                 outMess = r.readEntity(String.class);
@@ -51,10 +63,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
                         outMess += System.lineSeparator() + "Request URI: " + m.get("org.apache.cxf.request.uri");
                     }
                 }
-            } else {
-                responseStatus = ex.getResponse().getStatus(); // клиентские статусы не передаем напрямую
             }
-
         } catch (Throwable ex_) {
             LOG.log(Level.SEVERE, "error on getting  addinional exception info", ex_);
         }
@@ -63,18 +72,29 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
         }
 
         LOG.log(Level.WARNING, outMess, ex);
-        Response.StatusType status = Response.Status.fromStatusCode(responseStatus);
-        String outMessClient = responseStatus >= Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ? "Internal server error" : outMess;
-        if (ex.getCause() instanceof java.lang.IllegalArgumentException
-                && responseStatus == Response.Status.NOT_FOUND.getStatusCode()) {
-            // если 404 из-за не корректно введеного аргумента в URL, то транслируем в 450
-            status = new CustomResponseStatus(450, "Unclassifiable server error");
-        } else if (status == null) {
-            status = new CustomResponseStatus(responseStatus, outMessClient);
+
+        // Транслируем код ответа
+        Response.StatusType status;
+        String outMessClient;
+        if (responseStatus >= Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ||
+                responseStatus < CLIENT_ERROR_LOW_CODE) {
+            // Ошибки до 100 и после (вкл) 500 траслируем в 500
+            status = Response.Status.INTERNAL_SERVER_ERROR;
+            outMessClient = Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase();
+        } else {
+            if (ex.getCause() != null && ex.getCause() instanceof java.lang.IllegalArgumentException
+                    && responseStatus == Response.Status.NOT_FOUND.getStatusCode()) {
+                // если 404 из-за не корректно введеного аргумента в URL, то транслируем в 450
+                outMessClient = UNCLASSIFIABLE_SERVER_ERROR_TEXT;
+                status = new CustomResponseStatus(CLIENT_WEB_ERROR_START, outMessClient);
+            } else {
+                // Всё остальное - как есть
+                outMessClient = outMess;
+                status = new CustomResponseStatus(responseStatus, outMessClient);
+            }
+
         }
 
         return Response.status(status).entity(outMessClient).header("Content-Type", MediaType.TEXT_PLAIN + ";charset=UTF-8").build();
-
     }
-
 }
