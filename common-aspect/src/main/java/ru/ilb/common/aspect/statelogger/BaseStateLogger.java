@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author shadrin_nv
  */
-public abstract class BaseStateLogger implements IStateLogger {
+public class BaseStateLogger implements IStateLogger {
     protected static final Logger LOG = LoggerFactory.getLogger(BaseStateLogger.class);
     protected String controller;
 
@@ -33,5 +33,17 @@ public abstract class BaseStateLogger implements IStateLogger {
     @Override
     public void controller(String controller) {
         this.controller = controller;
+    }
+
+    @Override
+    public void start() {
+    }
+
+    @Override
+    public void working(Long errorCode, String msg) {
+    }
+
+    @Override
+    public void end() {
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages = {"ru.ilb.common.aspect", "ru.ilb.common.aspect.aspect", "ru.ilb.common.aspect.statelogger"})
+@ComponentScan(basePackages = {"ru.ilb.common.aspect", "ru.ilb.common.aspect.aspect", "ru.ilb.common.aspect.statelogger", "ru.ilb.common.aspect.mail"})
 public class SpringApplicationConfig {
 
 }

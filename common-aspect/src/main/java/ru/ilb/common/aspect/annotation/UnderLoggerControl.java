@@ -19,6 +19,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import ru.ilb.common.aspect.statelogger.BaseStateLogger;
 
 /**
  *
@@ -30,14 +31,20 @@ public @interface UnderLoggerControl {
 	static final String DEFAULT_CONTROL_NAME = "default";
 
     /**
-     * Класс логгер для формирования сообщений. Базовый клас - StateLogger
+     * Класс логгер для формирования сообщений. Не обязательный
      * @return
      */
-    public Class<?> loggerClass()/* default RobotStateLogger.class*/;
+    public Class<?> loggerClass() default BaseStateLogger.class;
 
     /**
      * Наименование контроллера.
      * @return
      */
     public String controller() default DEFAULT_CONTROL_NAME;
+
+    /**
+     * Автоматически уведомлять "админа" об исключении
+     * @return
+     */
+    public boolean autoAdminExceptionNotification() default true;
 }
