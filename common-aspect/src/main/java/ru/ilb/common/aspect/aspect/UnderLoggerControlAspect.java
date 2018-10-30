@@ -16,7 +16,9 @@
 package ru.ilb.common.aspect.aspect;
 
 import javax.annotation.PostConstruct;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
@@ -24,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.ilb.common.aspect.annotation.UnderLoggerControl;
+import ru.ilb.common.aspect.mail.ServerAdminNotifier;
 import ru.ilb.common.aspect.statelogger.BaseStateLogger;
 import ru.ilb.common.aspect.statelogger.StateLoggerFactory;
 
@@ -37,7 +40,10 @@ public class UnderLoggerControlAspect {
     protected static final Logger LOG = LoggerFactory.getLogger(UnderLoggerControlAspect.class);
 
     @Autowired
-    StateLoggerFactory stateLoggerFactory;
+    private StateLoggerFactory stateLoggerFactory;
+
+    @Autowired
+    private ServerAdminNotifier serverAdminNotifier;
 
     @Around(value = "@annotation(underLoggerControl)")
     public Object underLoggerControlAdvice(final ProceedingJoinPoint proceedingJoinPoint, final UnderLoggerControl underLoggerControl) throws Throwable {
@@ -61,6 +67,14 @@ public class UnderLoggerControlAspect {
 
         return value;
     }
+
+    @AfterThrowing(value = "@annotation(underLoggerControl)", throwing = "exp")
+    public void underLoggerControlAfterThrowing(final JoinPoint joinPoint, final Exception exp, final UnderLoggerControl underLoggerControl) {
+        if (underLoggerControl.autoAdminExceptionNotification()) {
+            serverAdminNotifier.sendMail(joinPoint, exp);
+        }
+    }
+
 
     @PostConstruct
     public void init() {
