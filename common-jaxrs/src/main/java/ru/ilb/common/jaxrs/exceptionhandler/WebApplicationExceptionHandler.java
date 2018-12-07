@@ -41,7 +41,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
 
     @Override
     public Response toResponse(WebApplicationException ex) {
-        // Код ответа
+        // код ответа
         Response r = ex.getResponse();
         int responseStatus;
         if (r != null) {
@@ -50,7 +50,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
             responseStatus = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
         }
 
-        // Текст ошибки
+        // текст ошибки
         String outMess = ex.getMessage();
         try {
             if (r != null && r.getEntity() != null) {
@@ -73,12 +73,13 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
 
         LOG.log(Level.WARNING, outMess, ex);
 
-        // Транслируем код ответа
+        // транслируем код ответа
         Response.StatusType status;
         String outMessClient;
-        if (responseStatus >= Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ||
-                responseStatus < CLIENT_ERROR_LOW_CODE) {
-            // Ошибки до 100 и после (вкл) 500 траслируем в 500
+        if ((responseStatus >= Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() || responseStatus < CLIENT_ERROR_LOW_CODE)
+                // 551 ошибку пропускаем и транслируем текст, как есть
+                && responseStatus != 551) {
+            // ошибки до 100 и после (вкл) 500 траслируем в 500
             status = Response.Status.INTERNAL_SERVER_ERROR;
             outMessClient = Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase();
         } else {
@@ -88,7 +89,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
                 outMessClient = UNCLASSIFIABLE_SERVER_ERROR_TEXT;
                 status = new CustomResponseStatus(CLIENT_WEB_ERROR_START, outMessClient);
             } else {
-                // Всё остальное - как есть
+                // всё остальное - как есть
                 outMessClient = outMess;
                 status = new CustomResponseStatus(responseStatus, outMessClient);
             }
