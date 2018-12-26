@@ -23,14 +23,19 @@ import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
  *
  * @author slavb
  */
+@Provider
 public class SendMailExceptionHandler implements ExceptionMapper<Exception> {
 
     private static final Logger LOG = Logger.getLogger(SendMailExceptionHandler.class.getName());
@@ -54,6 +59,36 @@ public class SendMailExceptionHandler implements ExceptionMapper<Exception> {
      */
     String mailCommandParams = "-t -oi";
 
+    public SendMailExceptionHandler() {
+        mailTo = getServerAdmin();
+    }
+
+    private String getServerAdmin() {
+        String server_admin = null;
+        // from jndi
+        if (server_admin == null) {
+            try {
+                Context initCtx = new InitialContext();
+                Context envCtx = (Context) initCtx.lookup("java:comp/env");
+                server_admin = (String) envCtx.lookup("SERVER_ADMIN");
+            } catch (NamingException e) {
+            }
+        }
+        // from system property
+        if (server_admin == null) {
+            server_admin = System.getProperty("SERVER_ADMIN");
+        }
+        // from system environment
+        if (server_admin == null) {
+            server_admin = System.getenv("SERVER_ADMIN");
+        }
+        //otherwise root
+        if (server_admin == null) {
+            server_admin = "root";
+        }
+        return server_admin;
+    }
+
     public void setMailTo(String mailTo) {
         this.mailTo = mailTo;
     }
@@ -69,7 +104,6 @@ public class SendMailExceptionHandler implements ExceptionMapper<Exception> {
     public void setMailCommandParams(String mailCommandParams) {
         this.mailCommandParams = mailCommandParams;
     }
-
 
     @Override
     public Response toResponse(Exception ex) {
@@ -108,11 +142,12 @@ public class SendMailExceptionHandler implements ExceptionMapper<Exception> {
         }
         return mailMsg;
     }
+
     private void sendMailCheck(String mailMsg) {
-        if(Files.exists(Paths.get(mailCommand))){
-            if(Files.isExecutable(Paths.get(mailCommand))){
+        if (Files.exists(Paths.get(mailCommand))) {
+            if (Files.isExecutable(Paths.get(mailCommand))) {
                 sendMail(mailMsg);
-            }else{
+            } else {
                 LOG.log(Level.SEVERE, "mail command {0} not executable", mailCommand);
             }
         } else {
