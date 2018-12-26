@@ -88,7 +88,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
 
                     // original response should be logged, not shown to client
                     if (response.getEntity() != null) {
-                        logstr.append("Cascade response :")
+                        logstr.append("Cascade response:")
                                 .append(response.readEntity(String.class));
                     }
                     //replace proxied http code
