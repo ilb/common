@@ -29,7 +29,7 @@ import javax.xml.bind.JAXBContext;
 import org.apache.cxf.jaxrs.impl.ResponseImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import ru.ilb.common.jaxrs.jaxb.JaxbMashaller;
+import ru.ilb.common.jaxrs.jaxb.JaxbUtil;
 
 /**
  * To catch cascade jax-rs client exceptions, set property
@@ -98,7 +98,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
                         //log request object
                         List list = (List) outMessage.get("java.util.List");
                         for (Object object : list) {
-                            logstr.append("\nObject: ").append(JaxbMashaller.marshal(jaxbContextResolver.getContext(object.getClass()), object, MediaType.APPLICATION_XML));
+                            logstr.append("\nObject: ").append(JaxbUtil.marshal(jaxbContextResolver.getContext(object.getClass()), object, MediaType.APPLICATION_XML));
                         }
                     }
 
