@@ -30,9 +30,9 @@ import org.eclipse.persistence.jaxb.UnmarshallerProperties;
  *
  * @author slavb
  */
-public class JaxbMashaller {
+public class JaxbUtil {
 
-    private JaxbMashaller() {
+    private JaxbUtil() {
     }
 
     public static <T> T unmarshal(JAXBContext jaxbContext, String data, Class<T> type, String mediaType) {
