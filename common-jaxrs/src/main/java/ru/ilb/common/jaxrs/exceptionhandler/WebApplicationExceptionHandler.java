@@ -71,7 +71,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
 
         try {
             // reparse error response if exists
-            if (response != null) {
+            if (response != null && response.getEntity()!=null) {
                 Message outMessage = null;
                 // cascade exception from jax-rs client
                 boolean cascade = false;
@@ -103,9 +103,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
                     }
 
                 } else {
-                    if (response.getEntity() != null) {
-                        message.append(response.readEntity(String.class));
-                    }
+                    message.append(response.readEntity(String.class));
                 }
             } else {
                 message.append(ex.getMessage());
