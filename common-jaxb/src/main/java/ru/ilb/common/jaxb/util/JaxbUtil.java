@@ -16,10 +16,14 @@
 package ru.ilb.common.jaxb.util;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
@@ -30,6 +34,7 @@ import javax.xml.transform.stream.StreamSource;
  * @author slavb
  */
 public class JaxbUtil {
+
     private static final String MEDIA_TYPE = "eclipselink.media-type";
     private static final String JSON_INCLUDE_ROOT = "eclipselink.json.include-root";
 
@@ -46,10 +51,10 @@ public class JaxbUtil {
      * @param mediaType
      * @return T
      */
-
     public static <T> T unmarshal(JAXBContext jaxbContext, String string, Class<T> type, String mediaType) {
         return unmarshal(jaxbContext, new StreamSource(new java.io.StringReader(string)), type, mediaType);
     }
+
     /**
      * unmarshalls object instance from Source
      *
@@ -73,9 +78,7 @@ public class JaxbUtil {
             } else {
                 unmarshal = unmarshaller.unmarshal(source);
             }
-            if (unmarshal instanceof JAXBElement<?>) {
-                unmarshal = ((JAXBElement<?>) unmarshal).getValue();
-            }
+            unmarshal = JAXBIntrospector.getValue(unmarshal);
 
             return (T) unmarshal;
 
@@ -86,6 +89,7 @@ public class JaxbUtil {
 
     /**
      * marshalls object instance to String
+     *
      * @param jaxbContext
      * @param object object to be marshalled
      * @param mediaType application/json or application/xml
@@ -107,4 +111,31 @@ public class JaxbUtil {
         return sw.toString();
     }
 
+    /**
+     * unmarshalls collection of object instances
+     *
+     * @param <T>
+     * @param jaxbContext
+     * @param source example from String: new StreamSource(new
+     * java.io.StringReader(string)), from InputStream: new StreamSource(is)
+     * @param type
+     * @param mediaType
+     * @return List
+     */
+    public static <T> List<T> unmarshalCollection(JAXBContext jaxbContext, Source source, Class<T> type, String mediaType) {
+
+        try {
+            List<T> result = new ArrayList();
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            unmarshaller.setProperty(MEDIA_TYPE, mediaType);
+            Collection tmp = (Collection) unmarshaller.unmarshal(source, type).getValue();
+            for (Object element : tmp) {
+                result.add((T) JAXBIntrospector.getValue(element));
+            }
+            return result;
+
+        } catch (JAXBException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 }
