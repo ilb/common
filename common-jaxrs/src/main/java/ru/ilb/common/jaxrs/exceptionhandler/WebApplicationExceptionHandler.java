@@ -29,7 +29,7 @@ import javax.xml.bind.JAXBContext;
 import org.apache.cxf.jaxrs.impl.ResponseImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import ru.ilb.common.jaxrs.jaxb.JaxbUtil;
+import ru.ilb.common.jaxb.util.JaxbUtil;
 
 /**
  * To catch cascade jax-rs client exceptions, set property
