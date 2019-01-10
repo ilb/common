@@ -36,9 +36,31 @@ public class JaxbUtil {
     private JaxbUtil() {
     }
 
-    public static <T> T unmarshal(JAXBContext jaxbContext, String data, Class<T> type, String mediaType) {
-        return unmarshal(jaxbContext, new StreamSource(new java.io.StringReader(data)), type, mediaType);
+    /**
+     * unmarshalls object instance from String
+     *
+     * @param <T>
+     * @param jaxbContext
+     * @param string source xml/json
+     * @param type deserved type (null - autodetect)
+     * @param mediaType
+     * @return T
+     */
+
+    public static <T> T unmarshal(JAXBContext jaxbContext, String string, Class<T> type, String mediaType) {
+        return unmarshal(jaxbContext, new StreamSource(new java.io.StringReader(string)), type, mediaType);
     }
+    /**
+     * unmarshalls object instance from Source
+     *
+     * @param <T>
+     * @param jaxbContext
+     * @param source example from String: new StreamSource(new
+     * java.io.StringReader(string)), from InputStream: new StreamSource(is)
+     * @param type deserved type (null - autodetect)
+     * @param mediaType application/json or application/xml
+     * @return T
+     */
     public static <T> T unmarshal(JAXBContext jaxbContext, Source source, Class<T> type, String mediaType) {
 
         try {
@@ -62,7 +84,14 @@ public class JaxbUtil {
         }
     }
 
-    public static String marshal(JAXBContext jaxbContext, Object obj, String mediaType) {
+    /**
+     * marshalls object instance to String
+     * @param jaxbContext
+     * @param object object to be marshalled
+     * @param mediaType application/json or application/xml
+     * @return
+     */
+    public static String marshal(JAXBContext jaxbContext, Object object, String mediaType) {
         StringWriter sw = new StringWriter();
         try {
             Marshaller marshaller = jaxbContext.createMarshaller();
@@ -71,7 +100,7 @@ public class JaxbUtil {
             if (MediaType.APPLICATION_JSON.equals(mediaType)) {
                 marshaller.setProperty(JSON_INCLUDE_ROOT, false);
             }
-            marshaller.marshal(obj, sw);
+            marshaller.marshal(object, sw);
         } catch (JAXBException ex) {
             throw new RuntimeException(ex);
         }
