@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
@@ -70,8 +69,10 @@ public class JaxbUtil {
 
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.setProperty(MEDIA_TYPE, mediaType);
-            unmarshaller.setProperty(JSON_INCLUDE_ROOT, false);
+            if (unmarshaller.getClass().getName().contains("eclipse")) {
+                unmarshaller.setProperty(MEDIA_TYPE, mediaType);
+                unmarshaller.setProperty(JSON_INCLUDE_ROOT, false);
+            }
             Object unmarshal;
             if (type != null) {
                 unmarshal = unmarshaller.unmarshal(source, type);
@@ -100,9 +101,11 @@ public class JaxbUtil {
         try {
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.setProperty(MEDIA_TYPE, mediaType);
-            if (MediaType.APPLICATION_JSON.equals(mediaType)) {
-                marshaller.setProperty(JSON_INCLUDE_ROOT, false);
+            if (marshaller.getClass().getName().contains("eclipse")) {
+                marshaller.setProperty(MEDIA_TYPE, mediaType);
+                if (MediaType.APPLICATION_JSON.equals(mediaType)) {
+                    marshaller.setProperty(JSON_INCLUDE_ROOT, false);
+                }
             }
             marshaller.marshal(object, sw);
         } catch (JAXBException ex) {
@@ -127,7 +130,9 @@ public class JaxbUtil {
         try {
             List<T> result = new ArrayList();
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.setProperty(MEDIA_TYPE, mediaType);
+            if (unmarshaller.getClass().getName().contains("eclipse")) {
+                unmarshaller.setProperty(MEDIA_TYPE, mediaType);
+            }
             Collection tmp = (Collection) unmarshaller.unmarshal(source, type).getValue();
             for (Object element : tmp) {
                 result.add((T) JAXBIntrospector.getValue(element));
