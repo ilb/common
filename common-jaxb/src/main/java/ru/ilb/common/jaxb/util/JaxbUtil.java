@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilb.common.jaxrs.jaxb;
+package ru.ilb.common.jaxb.util;
 
 import java.io.StringWriter;
 import javax.ws.rs.core.MediaType;
@@ -24,13 +24,14 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import org.eclipse.persistence.jaxb.UnmarshallerProperties;
 
 /**
  *
  * @author slavb
  */
 public class JaxbUtil {
+    private static final String MEDIA_TYPE = "eclipselink.media-type";
+    private static final String JSON_INCLUDE_ROOT = "eclipselink.json.include-root";
 
     private JaxbUtil() {
     }
@@ -42,8 +43,8 @@ public class JaxbUtil {
 
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.setProperty(UnmarshallerProperties.MEDIA_TYPE, mediaType);
-            unmarshaller.setProperty(UnmarshallerProperties.JSON_INCLUDE_ROOT, false);
+            unmarshaller.setProperty(MEDIA_TYPE, mediaType);
+            unmarshaller.setProperty(JSON_INCLUDE_ROOT, false);
             Object unmarshal;
             if (type != null) {
                 unmarshal = unmarshaller.unmarshal(source, type);
@@ -66,9 +67,9 @@ public class JaxbUtil {
         try {
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.setProperty("eclipselink.media-type", mediaType);
+            marshaller.setProperty(MEDIA_TYPE, mediaType);
             if (MediaType.APPLICATION_JSON.equals(mediaType)) {
-                marshaller.setProperty("eclipselink.json.include-root", false);
+                marshaller.setProperty(JSON_INCLUDE_ROOT, false);
             }
             marshaller.marshal(obj, sw);
         } catch (JAXBException ex) {
