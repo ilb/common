@@ -18,6 +18,7 @@ import org.eclipse.persistence.sessions.Session;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -27,6 +28,7 @@ public class DescriptorUtils {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DescriptorUtils.class);
 
+    @Autowired
     EntityManager entityManager;
 
     public void setEntityManager(EntityManager entityManager) {
