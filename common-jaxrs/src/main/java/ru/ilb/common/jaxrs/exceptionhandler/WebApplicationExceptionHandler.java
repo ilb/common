@@ -116,8 +116,9 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
             message.append(UNCLASSIFIABLE_SERVER_ERROR_TEXT);
             logstr.append(ex.toString());
         }
-
-        message.append("\nExchange Id: ").append(exchangeId);
+        if (exchangeId != null) {
+            message.append("\nExchange Id: ").append(exchangeId);
+        }
         if (logstr.length() != 0) {
             logstr.append("\n");
         }
