@@ -4,7 +4,7 @@
     <parent>
         <groupId>ru.ilb.common</groupId>
         <artifactId>common</artifactId>
-        <version>1.28</version>
+        <version>1.29-SNAPSHOT</version>
     </parent>
     <artifactId>common-aspect</artifactId>
     <packaging>jar</packaging>
