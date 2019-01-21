@@ -132,6 +132,9 @@ public class JaxbUtil {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             if (unmarshaller.getClass().getName().contains("eclipse")) {
                 unmarshaller.setProperty(MEDIA_TYPE, mediaType);
+                if (MediaType.APPLICATION_JSON.equals(mediaType)) {
+                    unmarshaller.setProperty(JSON_INCLUDE_ROOT, false);
+                }
             }
             Collection tmp = (Collection) unmarshaller.unmarshal(source, type).getValue();
             for (Object element : tmp) {
