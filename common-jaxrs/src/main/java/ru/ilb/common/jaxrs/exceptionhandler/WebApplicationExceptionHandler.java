@@ -34,6 +34,7 @@ import ru.ilb.common.jaxb.util.JaxbUtil;
 /**
  * To catch cascade jax-rs client exceptions, set property
  * &lt;entry key="support.wae.spec.optimization" value="false"/>
+ *
  * @author slavb
  *
  */
@@ -71,7 +72,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
 
         try {
             // reparse error response if exists
-            if (response != null && response.getEntity()!=null) {
+            if (response != null && response.getEntity() != null) {
                 Message outMessage = null;
                 // cascade exception from jax-rs client
                 boolean cascade = false;
@@ -94,11 +95,14 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
                     //replace proxied http code
                     responseStatus = CASCADE_HTTP_ERROR;
 
-                    if (jaxbContextResolver!=null && outMessage.get("java.util.List") != null) {
+                    if (jaxbContextResolver != null && outMessage.get("java.util.List") != null) {
                         //log request object
                         List list = (List) outMessage.get("java.util.List");
-                        for (Object object : list) {
-                            logstr.append("\nObject: ").append(JaxbUtil.marshal(jaxbContextResolver.getContext(object.getClass()), object, MediaType.APPLICATION_XML));
+                        String contentType = (String) outMessage.get("Content-Type");
+                        if (MediaType.APPLICATION_XML.equals(contentType) || MediaType.APPLICATION_JSON.equals(contentType)) {
+                            for (Object object : list) {
+                                logstr.append("\nObject: ").append(JaxbUtil.marshal(jaxbContextResolver.getContext(object.getClass()), object, contentType));
+                            }
                         }
                     }
 
