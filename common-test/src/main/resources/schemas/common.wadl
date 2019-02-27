@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application 
+    xmlns="http://wadl.dev.java.net/2009/02" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:x="http://www.w3.org/1999/xhtml"
+>    
+    <grammars>
+        <include href="./web/web-app_3_0.xsd" />
+    </grammars>
+
+    <resources>
+        <resource />
+    </resources>
+    
+</application>
