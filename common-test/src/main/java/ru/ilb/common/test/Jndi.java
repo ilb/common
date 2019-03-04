@@ -51,7 +51,7 @@ public abstract class Jndi {
     /**
      * Наименования переменных, которых не следует считывать с web.xml
      */
-    public List<String> excludeNames = new ArrayList<>();
+    protected List<String> excludeNames = new ArrayList<>();
 
     public final WebAppType getWebApp(){
         if (webApp != null) {
@@ -72,7 +72,15 @@ public abstract class Jndi {
         return webApp;
     }
 
-    public Map<String, Object> getParams() {
+    protected List<String> getExcludeNames() {
+        return excludeNames;
+    }
+
+    protected void addExcludeName(String name) {
+        excludeNames.add(name);
+    }
+
+    protected Map<String, Object> getParams() {
         if (!params.isEmpty()) {
             return params;
         }
@@ -97,7 +105,7 @@ public abstract class Jndi {
         return params;
     }
 
-    public Object getEnvEntryValue(EnvEntryType envEntryType) {
+    protected Object getEnvEntryValue(EnvEntryType envEntryType) {
         switch (envEntryType.getEnvEntryType().getValue()){
             case "java.lang.Boolean":
                 return Boolean.valueOf(envEntryType.getEnvEntryValue().getValue());
@@ -110,11 +118,11 @@ public abstract class Jndi {
         }
     }
 
-    public Object getResourceRefValue(ResourceRefType resourceRefType) {
+    protected Object getResourceRefValue(ResourceRefType resourceRefType) {
         return "";
     }
 
-    public Object getResourceEnvRefValue(ResourceEnvRefType resourceEnvRefType) {
+    protected Object getResourceEnvRefValue(ResourceEnvRefType resourceEnvRefType) {
         return "";
     }
 
