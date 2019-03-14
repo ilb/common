@@ -26,9 +26,19 @@ public class EntityBitAccessor implements BitAccessor {
         return getId(o).intValue() - 1;
     }
 
-    private Long getId(Object o) {
+    private Integer getId(Object o) {
         try {
-            return (Long) idField.get(o);
+            Object obj = idField.get(o);
+            if (obj instanceof Long){
+                return ((Long) obj).intValue();
+            } else if (obj instanceof Integer) {
+                return ((Integer) obj).intValue();
+            } else if (obj instanceof Byte) {
+                return ((Byte) obj).intValue();
+            } else if (obj instanceof Short) {
+                return ((Short) obj).intValue();
+            }
+            return  Integer.parseInt(String.valueOf(obj));
         } catch (Throwable ex) {
             return null;
         }
