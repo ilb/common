@@ -12,9 +12,9 @@
         <module>common-jaxb</module>
         <module>common-jaxrs</module>
         <module>common-jpa</module>
-        <module>common-jpa-jaxb</module>
         <module>common-aspect</module>
         <module>common-test</module>
+        <module>common-openapi</module>
     </modules>
     <licenses>
         <license>
