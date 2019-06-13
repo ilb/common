@@ -20,11 +20,13 @@ import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,11 +63,17 @@ public class OpenAPISpecFilterImpl implements OpenAPISpecFilter {
 
     @Override
     public Optional<RequestBody> filterRequestBody(RequestBody requestBody, Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
-        //skip CXF MultipartBody schema generation
+        //replace CXF MultipartBody with file upload
         MediaType mt = requestBody.getContent().get("multipart/form-data");
         if (mt != null && mt.getSchema() != null && mt.getSchema().get$ref() != null && mt.getSchema().get$ref().contains("MultipartBody")) {
-            mt.getSchema().setType("object");
-            mt.getSchema().set$ref(null);
+            Schema schema = mt.getSchema();
+            schema.setType("object");
+            schema.set$ref(null);
+            // @see https://swagger.io/docs/specification/describing-request-body/file-upload/
+            // single file upload
+            schema.addProperties("file", new Schema().type("string").format("binary"));
+            // multi file upload
+            //schema.addProperties("file", new ArraySchema().type("array").items(new Schema().type("string").format("binary")));
             LOG.log(Level.INFO, () -> "filterRequestBody operationId=" + operation.getOperationId() + " replace MultipartBody with object");
         }
         return Optional.of(requestBody);
