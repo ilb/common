@@ -22,7 +22,7 @@ import io.swagger.v3.oas.integration.api.ObjectMapperProcessor;
  *
  * @author slavb
  */
-public class JaxbObjectMapperProcessor implements ObjectMapperProcessor{
+public class ObjectMapperProcessorImpl implements ObjectMapperProcessor{
 
     @Override
     public void processJsonObjectMapper(ObjectMapper om) {

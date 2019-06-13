@@ -28,5 +28,16 @@
             <artifactId>jackson-module-jaxb-annotations</artifactId>
             <version>${jackson-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${apache-cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-maven-plugin</artifactId>
+            <version>${swagger-version}</version>
+
+        </dependency>
     </dependencies>
 </project>
