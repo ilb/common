@@ -34,10 +34,16 @@
             <version>${apache-cxf.version}</version>
         </dependency>
         <!-- add dependency to download sources for debug -->
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-maven-plugin</artifactId>
             <version>${swagger-version}</version>
         </dependency>-->
+<!--        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-wadl2java-plugin</artifactId>
+            <version>${apache-cxf.version}</version>
+        </dependency>-->
+
     </dependencies>
 </project>
