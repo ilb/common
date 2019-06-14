@@ -39,11 +39,11 @@
             <artifactId>swagger-maven-plugin</artifactId>
             <version>${swagger-version}</version>
         </dependency>-->
-<!--        <dependency>
+        <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-wadl2java-plugin</artifactId>
             <version>${apache-cxf.version}</version>
-        </dependency>-->
+        </dependency>
 
     </dependencies>
 </project>
