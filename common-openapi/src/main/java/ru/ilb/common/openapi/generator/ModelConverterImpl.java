@@ -53,7 +53,7 @@ public class ModelConverterImpl implements ModelConverter {
                 JavaType _type = Json.mapper().constructType(type.getType());
                 if (_type != null) {
                     Class<?> cls = _type.getRawClass();
-                    if (ignorePackage.contains(cls.getPackageName())) {
+                    if (ignorePackage.contains(cls.getPackage().getName())) {
                         return null;
                     }
                 }
