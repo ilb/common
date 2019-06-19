@@ -24,7 +24,9 @@ import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.Schema;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,11 +40,16 @@ public class ModelConverterImpl implements ModelConverter {
 
     static final Logger LOG = Logger.getLogger(ModelConverterImpl.class.getName());
 
-    private final String ignorePackage;
+    private final List<String> ignorePackage;
 
     public ModelConverterImpl() {
         Properties properties = loadProperties();
-        ignorePackage = properties.getProperty("ignorePackage");
+        String ignorePackageStr = properties.getProperty("ignorePackage");
+        if (ignorePackageStr!=null && !ignorePackageStr.trim().isEmpty()) {
+            ignorePackage = Arrays.asList(ignorePackageStr.trim().split(","));
+        } else {
+            ignorePackage = null;
+        }
         LOG.log(Level.FINE, "ignorePackage={0}", ignorePackage);
     }
 
@@ -53,7 +60,7 @@ public class ModelConverterImpl implements ModelConverter {
                 JavaType _type = Json.mapper().constructType(type.getType());
                 if (_type != null) {
                     Class<?> cls = _type.getRawClass();
-                    if (cls.getPackage()!=null && ignorePackage.contains(cls.getPackage().getName())) {
+                    if (cls.getPackage() != null && ignorePackage.stream().anyMatch(s -> s.contains(cls.getPackage().getName()))) {
                         return null;
                     }
                 }
