@@ -47,10 +47,11 @@ public class ModelConverterImpl implements ModelConverter {
         String ignorePackageStr = properties.getProperty("ignorePackage");
         if (ignorePackageStr!=null && !ignorePackageStr.trim().isEmpty()) {
             ignorePackage = Arrays.asList(ignorePackageStr.trim().split(","));
+            LOG.log(Level.INFO, "ignorePackage={0}", ignorePackage);
         } else {
             ignorePackage = null;
         }
-        LOG.log(Level.FINE, "ignorePackage={0}", ignorePackage);
+        
     }
 
     @Override
