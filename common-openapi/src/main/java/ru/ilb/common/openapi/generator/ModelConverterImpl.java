@@ -45,25 +45,23 @@ public class ModelConverterImpl implements ModelConverter {
     public ModelConverterImpl() {
         Properties properties = loadProperties();
         String ignorePackageStr = properties.getProperty("ignorePackage");
-        if (ignorePackageStr!=null && !ignorePackageStr.trim().isEmpty()) {
+        if (ignorePackageStr != null && !ignorePackageStr.trim().isEmpty()) {
             ignorePackage = Arrays.asList(ignorePackageStr.trim().split(","));
             LOG.log(Level.INFO, "ignorePackage={0}", ignorePackage);
         } else {
             ignorePackage = null;
         }
-        
+
     }
 
     @Override
     public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
         if (ignorePackage != null) {
-            if (type.isSchemaProperty()) {
-                JavaType _type = Json.mapper().constructType(type.getType());
-                if (_type != null) {
-                    Class<?> cls = _type.getRawClass();
-                    if (cls.getPackage() != null && ignorePackage.stream().anyMatch(s -> s.contains(cls.getPackage().getName()))) {
-                        return null;
-                    }
+            JavaType _type = Json.mapper().constructType(type.getType());
+            if (_type != null) {
+                Class<?> cls = _type.getRawClass();
+                if (cls.getPackage() != null && ignorePackage.stream().anyMatch(s -> s.contains(cls.getPackage().getName()))) {
+                    return null;
                 }
             }
         }
