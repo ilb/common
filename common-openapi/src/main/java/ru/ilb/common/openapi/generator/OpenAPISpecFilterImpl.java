@@ -80,8 +80,31 @@ public class OpenAPISpecFilterImpl implements OpenAPISpecFilter {
         return Optional.of(requestBody);
     }
 
+    /**
+     * filterResponse actions
+     * 1. set default type "object" for application/json
+     * @param response
+     * @param operation
+     * @param api
+     * @param params
+     * @param cookies
+     * @param headers
+     * @return
+     */
     @Override
     public Optional<ApiResponse> filterResponse(ApiResponse response, Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        MediaType mt = response.getContent().get("application/json");
+        if (mt != null) {
+            if (mt.getSchema()==null) {
+                Schema schema = new Schema();
+                schema.setType("object");
+                mt.setSchema(schema);
+            }
+//            if (mt.getSchema() != null && mt.getSchema().get$ref() == null && mt.getSchema().getType()==null) {
+//                mt.getSchema().setType("object");
+//            }
+        }
+
         return Optional.of(response);
     }
 
