@@ -14,7 +14,6 @@
         <module>common-jpa</module>
         <module>common-aspect</module>
         <module>common-test</module>
-        <module>common-openapi</module>
     </modules>
     <licenses>
         <license>
