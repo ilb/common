@@ -29,23 +29,17 @@
             <email>github@bystrobank.ru</email>
         </developer>
     </developers>
+    <!-- GITHUB MIRROR
     <scm>
-        <connection>scm:git:https://github.com/ilb/common.git</connection>
-        <url>https://github.com/ilb/common</url>
+        <connection>scm:git:https://github.com/ilb/${project.name}.git</connection>
+        <url>https://github.com/ilb/${project.name}</url>
         <tag>HEAD</tag>
     </scm>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <name>Sonatype Nexus snapshot repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <name>Sonatype Nexus release repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
+    -->
+    <scm>
+        <connection>scm:svn:https://svn.ilb.ru/repos/${project.name}/trunk</connection>
+        <url>https://svn.ilb.ru/viewvc/${project.name}/</url>
+    </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
