@@ -7,6 +7,7 @@ package ru.ilb.common.jpa.bitset;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Objects;
 import javax.persistence.Id;
 
 /**
@@ -21,6 +22,10 @@ public class EntityBitAccessor implements BitAccessor {
         idField = findField(clazz, Id.class);
     }
 
+    public EntityBitAccessor(Class clazz, String name) {
+        idField = findFieldByName(clazz, name);
+    }
+
     @Override
     public int getBitNum(Object o) {
         return getId(o).intValue() - 1;
@@ -29,7 +34,7 @@ public class EntityBitAccessor implements BitAccessor {
     private Integer getId(Object o) {
         try {
             Object obj = idField.get(o);
-            if (obj instanceof Long){
+            if (obj instanceof Long) {
                 return ((Long) obj).intValue();
             } else if (obj instanceof Integer) {
                 return ((Integer) obj).intValue();
@@ -38,7 +43,7 @@ public class EntityBitAccessor implements BitAccessor {
             } else if (obj instanceof Short) {
                 return ((Short) obj).intValue();
             }
-            return  Integer.parseInt(String.valueOf(obj));
+            return Integer.parseInt(String.valueOf(obj));
         } catch (Throwable ex) {
             return null;
         }
@@ -49,7 +54,29 @@ public class EntityBitAccessor implements BitAccessor {
         while (c != null) {
             for (Field field : c.getDeclaredFields()) {
                 if (field.isAnnotationPresent(ann)) {
-                    field.setAccessible(true); //FIXME, переделать на что то более красивое
+                    field.setAccessible(true); // FIXME, переделать на что то более красивое
+                    return field;
+                }
+            }
+            c = c.getSuperclass();
+        }
+
+        return null;
+    }
+
+    /**
+     * Формирование списка полей по имени
+     *
+     * @param classs
+     * @param name
+     * @return Field
+     */
+    private Field findFieldByName(Class<?> classs, String name) {
+        Class<?> c = classs;
+        while (c != null) {
+            for (Field field : c.getDeclaredFields()) {
+                if (Objects.equals(name, field.getName())) {
+                    field.setAccessible(true); // FIXME, переделать на что то более красивое
                     return field;
                 }
             }
