@@ -8,40 +8,38 @@ package ru.ilb.common.jpa.bitset;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.BitSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Store Sets as bit field
  *
- * To use, need to define class, extending BitSet: public class CreateOptionsSet
- * extends BitSet&lt;CreateOptions> {
-
- public CreateOptionsSet() { }
-
- public CreateOptionsSet(Long bitSet) { super(bitSet); }
-
- public CreateOptionsSet(Collection&lt;CreateOptions> items) { super(items); }
- * } define AttributeConverter and include in persistance.xml:
+ * To use, need to define class, extending BitSet: public class CreateOptionsSet extends BitSet&lt;CreateOptions> {
+ *
+ * public CreateOptionsSet() { }
+ *
+ * public CreateOptionsSet(Long bitSet) { super(bitSet); }
+ *
+ * public CreateOptionsSet(Collection&lt;CreateOptions> items) { super(items); } } define AttributeConverter and include in persistance.xml:
  * <pre>
  * {@code
  * @Converter(autoApply = true)
  * public class ApplicationFactConverter implements AttributeConverter<ApplicationFactSet, byte[]> {
- * 
+ *
  *     @Override
  *     public byte[] convertToDatabaseColumn(ApplicationFactSet attribute) {
  *         return attribute == null ? null : attribute.toByteArray();
  *     }
- * 
+ *
  *     @Override
  *     public ApplicationFactSet convertToEntityAttribute(byte[] dbData) {
  *         return dbData == null ? null : new ApplicationFactSet(dbData);
  *     }
- * 
+ *
  * }
  * }
  * </pre>
@@ -51,7 +49,6 @@ import java.util.stream.Stream;
  */
 public class BigBitSet<T> implements Serializable {
 
-//    protected int MAX_BIT_LENGTH = 128;
     protected BitSet bitSet;
 
     private final BitAccessor accessor;
@@ -87,18 +84,37 @@ public class BigBitSet<T> implements Serializable {
         accessor = clazz.isEnum() ? new EnumBitAccessor() : new EntityBitAccessor(clazz);
     }
 
+    public BigBitSet(BitAccessor accessor) {
+        this.accessor = accessor;
+    }
+
     public BigBitSet(BitSet bitSet) {
         this();
         this.bitSet = bitSet;
     }
+
+    public BigBitSet(BitAccessor accessor, BitSet bitSet) {
+        this.accessor = accessor;
+        this.bitSet = bitSet;
+    }
+
     public BigBitSet(byte[] value) {
         this();
         this.bitSet = BitSet.valueOf(value);
     }
-    
+
+    public BigBitSet(BitAccessor accessor, byte[] value) {
+        this.accessor = accessor;
+        this.bitSet = BitSet.valueOf(value);
+    }
 
     public BigBitSet(Collection<T> items) {
         this();
+        addAll(items);
+    }
+
+    public BigBitSet(BitAccessor accessor, Collection<T> items) {
+        this.accessor = accessor;
         addAll(items);
     }
 
@@ -117,11 +133,10 @@ public class BigBitSet<T> implements Serializable {
     public BitSet getBitSet() {
         return this.bitSet;
     }
-    
+
     public byte[] toByteArray() {
-        return bitSet!=null ? bitSet.toByteArray() : null;
+        return bitSet != null ? bitSet.toByteArray() : null;
     }
-    
 
     public void setBitSet(BitSet bitSet) {
         this.bitSet = bitSet;
@@ -135,18 +150,21 @@ public class BigBitSet<T> implements Serializable {
         Boolean res = items.stream().map(this::contains).reduce((c1, c2) -> c1 && c2).orElse(Boolean.FALSE);
         return res;
     }
+
     public boolean containsAll(T... items) {
         //optimize this
-        return  Stream.of(items).map(this::contains).reduce((c1, c2) -> c1 && c2).orElse(Boolean.FALSE);
-    }    
+        return Stream.of(items).map(this::contains).reduce((c1, c2) -> c1 && c2).orElse(Boolean.FALSE);
+    }
+
     public boolean containsAny(Collection<T> items) {
         //optimize this
         return items.stream().map(this::contains).reduce((c1, c2) -> c1 || c2).orElse(Boolean.FALSE);
     }
+
     public boolean containsAny(T... items) {
         //optimize this
-        return  Stream.of(items).map(this::contains).reduce((c1, c2) -> c1 || c2).orElse(Boolean.FALSE);
-    }    
+        return Stream.of(items).map(this::contains).reduce((c1, c2) -> c1 || c2).orElse(Boolean.FALSE);
+    }
 
     public boolean remove(T item) {
 
@@ -166,6 +184,7 @@ public class BigBitSet<T> implements Serializable {
         int bitNum = accessor.getBitNum(item);
         bitSet.set(bitNum);
     }
+
     public void set(T item, boolean value) {
         if (bitSet == null) {
             bitSet = new BitSet();
@@ -189,7 +208,7 @@ public class BigBitSet<T> implements Serializable {
      */
     public List<Integer> getSetBits() {
         //List<Integer> res = new ArrayList<>();
-        List<Integer> res = bitSet!=null ? bitSet.stream().boxed().collect(Collectors.toList()): new ArrayList<>();
+        List<Integer> res = (bitSet != null ? bitSet.stream().boxed().collect(Collectors.toList()) : new ArrayList<>());
         return res;
         //return res;
     }
