@@ -25,17 +25,17 @@ import org.apache.cxf.jaxrs.client.WebClient;
 public class AsyncWebClient {
     public static Response get(Object resource, Response res) {
         org.apache.cxf.jaxrs.client.Client client = WebClient.client(resource);
-        WebClient wClient = WebClient.fromClient(client);        
+        WebClient wClient = WebClient.fromClient(client);
         return getResponse(wClient, res);
     }
     /**
      * TODO: чтение заголовка Refresh, секунд
      * @param wClient
      * @param res
-     * @return 
+     * @return
      */
-    public static Response getResponse(WebClient wClient,Response res){        
-        if ((res.getStatus() == 202 || res.getStatus() == 303) || res.getStatus() == 302) {            
+    public static Response getResponse(WebClient wClient,Response res) {
+        if ((res.getStatus() == 202 || res.getStatus() == 303) || res.getStatus() == 302) {
             String url = res.getLocation().toString();
             while (res.getStatus() == 202 || res.getStatus() == 303 || res.getStatus() == 302) {
                 if(res.getLocation()!=null){
@@ -49,8 +49,8 @@ public class AsyncWebClient {
                 }
                 res = wClient.get();
             }
-        }  
+        }
         return res;
-    }    
-    
+    }
+
 }

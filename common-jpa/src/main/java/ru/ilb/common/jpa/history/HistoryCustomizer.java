@@ -21,7 +21,7 @@ import org.eclipse.persistence.config.DescriptorCustomizer;
 
 /**
  * Configure history on descriptor. See also HistorySessionCustomizer
- * Usage: annotate entity with 
+ * Usage: annotate entity with
  * @Customizer(ru.ilb.common.jpa.history.HistoryCustomizer.class)
  * @author slavb
  */

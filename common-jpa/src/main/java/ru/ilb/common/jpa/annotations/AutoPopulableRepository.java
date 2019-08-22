@@ -35,6 +35,6 @@ public @interface AutoPopulableRepository {
      * @return
      */
     Class<? extends DatabaseMapping>[] mergeMappingTypes() default {};
-    
+
 }
 

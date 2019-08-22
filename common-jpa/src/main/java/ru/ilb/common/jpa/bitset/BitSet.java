@@ -14,17 +14,17 @@ import java.util.Objects;
 
 /**
  * Store Sets as bit field
- * 
+ *
  * To use, need to define class, extending BitSet:
  * public class CreateOptionsSet extends BitSet&lt;CreateOptions> {
- * 
+ *
  *     public CreateOptionsSet() {
  *     }
- * 
+ *
  *     public CreateOptionsSet(Long value) {
  *         super(value);
  *     }
- * 
+ *
  *     public CreateOptionsSet(Collection&lt;CreateOptions> items) {
  *         super(items);
  *     }
@@ -34,20 +34,20 @@ import java.util.Objects;
  * {@code
  * @Converter(autoApply = true)
  * public class CreateOptionsConverter implements AttributeConverter<CreateOptionsSet, Long> {
- * 
+ *
  *     @Override
  *     public Long convertToDatabaseColumn(CreateOptionsSet attribute) {
  *         return attribute == null ? null : attribute.getValue();
  *     }
- * 
+ *
  *     @Override
  *     public CreateOptionsSet convertToEntityAttribute(Long dbData) {
  *         return dbData == null ? null : new CreateOptionsSet(dbData);
  *     }
- * 
+ *
  * }
  * }
- * </pre> 
+ * </pre>
  * @author slavb
  * @param <T> stored object type
  */
@@ -59,7 +59,7 @@ public class BitSet<T> implements Serializable {
 
     public BitSet() {
         Class<T> clazz = getParamClass(0);
-        
+
         accessor = clazz.isEnum() ? new EnumBitAccessor() : new EntityBitAccessor(clazz);
     }
 

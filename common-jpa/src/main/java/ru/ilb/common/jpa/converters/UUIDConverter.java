@@ -33,7 +33,7 @@ public abstract class UUIDConverter {
         bb.putLong(uuid.getLeastSignificantBits());
         return bb.array();
     }
-    
+
     public static UUID bytesToUUID(byte[] bytes) {
         if(bytes==null || bytes.length==0){
             return null;
@@ -51,7 +51,7 @@ public abstract class UUIDConverter {
             lsl = (lsl << 8) | (bytes[i] & 0xFF);
         }
         return new UUID(msl, lsl);
-        
+
     }
 
 }

@@ -50,13 +50,13 @@ import org.springframework.transaction.annotation.Transactional;
  * @author slavb
  */
 public class AutoHistoryEntityUtil {
-    
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AutoHistoryEntityUtil.class);
-    
+
     private final static String SEQ_GEN_HIST_IDENTITY="SEQ_GEN_HIST_IDENTITY";
 
     Session session;
-    
+
 //    public void setEntityManager(EntityManager entityManager) {
 //        session = entityManager.unwrap(Session.class);
 //    }
@@ -64,7 +64,7 @@ public class AutoHistoryEntityUtil {
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         session = JpaHelper.getServerSession(entityManagerFactory);
     }
-    
+
     @PostConstruct
     @Transactional
     void initialize() {
@@ -72,14 +72,14 @@ public class AutoHistoryEntityUtil {
         List<ClassDescriptor> descriptors = session.getDescriptors().values().stream()
                 .filter(d -> AnnotationUtils.getAnnotation(d.getJavaClass(), AutoHistory.class) != null)
                 .collect(Collectors.toList());
-        
+
         createHistoryEntities((DatabaseSession) session,descriptors);
     }
 
     /**
      * Create dynamic history entities
      * @param session
-     * @param descriptors 
+     * @param descriptors
      */
     void createHistoryEntities(DatabaseSession session, Collection<ClassDescriptor> descriptors) {
         DynamicClassLoader dcl = new DynamicClassLoader(DatabaseSession.class.getClassLoader());
@@ -103,7 +103,7 @@ public class AutoHistoryEntityUtil {
      * @param session
      * @param createMissingTables
      * @param generateFKConstraints
-     * @param types 
+     * @param types
      */
     private void addTypes(DatabaseSession session, boolean createMissingTables, boolean generateFKConstraints, DynamicType... types) {
         DynamicHelper helper = new DynamicHelper(session); // JPADynamicHelper
@@ -118,7 +118,7 @@ public class AutoHistoryEntityUtil {
     /**
      * create tables with create-or-extend mode
      * @param session
-     * @param generateFKConstraints 
+     * @param generateFKConstraints
      */
     private void createTables(DatabaseSession session, boolean generateFKConstraints) {
         if (!session.isConnected()) {
@@ -138,7 +138,7 @@ public class AutoHistoryEntityUtil {
      * Adds HISTID, ROWSTART, ROWEND columns, indexes, and copies all direct and *ToOne mappings from base entity
      * @param descriptor
      * @param dcl
-     * @return 
+     * @return
      */
     private DynamicType createHistoryType(ClassDescriptor descriptor, DynamicClassLoader dcl) {
         //String packagePrefix = packageName.endsWith(".") ? packageName : packageName + ".";
@@ -153,14 +153,13 @@ public class AutoHistoryEntityUtil {
         builder.setPrimaryKeyFields("HISTID");
 
         builder.addDirectMapping("histId", Long.class, "HISTID");
-        
+
         IndexDefinition idxId = new IndexDefinition();
         idxId.setTargetTable(tableName);
         idxId.setName("INDEX_" + tableName + "_ID");
         idxId.addField("ID");
         builder.getType().getDescriptor().getTables().get(0).getIndexes().add(idxId);
-        
-        
+
         builder.configureSequencing(SEQ_GEN_HIST_IDENTITY, "HISTID");
         //builder.getType().getDescriptor().setSequence(sequence);
         builder.addDirectMapping("rowStart", java.sql.Timestamp.class, "ROWSTART"); // TODO LocalDateTime.class
@@ -199,7 +198,7 @@ public class AutoHistoryEntityUtil {
                 builder.addMapping(m);
             }
         });
-        
+
         if(!fieldNames.isEmpty()){
             fields.stream().filter((df) -> (fieldNames.contains(df.getName()))).forEachOrdered((df) -> {
                 //каждому DTYPE устанавливаем его тип
@@ -212,7 +211,7 @@ public class AutoHistoryEntityUtil {
     /**
      * Converts DatabaseMapping
      * @param src
-     * @return 
+     * @return
      */
     private DatabaseMapping convertMapping(DatabaseMapping src) {
         if (src instanceof DirectToFieldMapping) {
@@ -228,7 +227,7 @@ public class AutoHistoryEntityUtil {
     /**
      * Converts DirectToFieldMapping
      * @param src
-     * @return 
+     * @return
      */
     private DatabaseMapping convertMapping(DirectToFieldMapping src) {
         DirectToFieldMapping mapping = new DirectToFieldMapping();
@@ -250,7 +249,7 @@ public class AutoHistoryEntityUtil {
     /**
      * Converts *ToOne mapping
      * @param src
-     * @return 
+     * @return
      */
     private DatabaseMapping convertMapping(OneToOneMapping src) {
         OneToOneMapping mapping = new OneToOneMapping();
