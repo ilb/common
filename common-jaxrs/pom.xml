@@ -5,7 +5,7 @@
         <groupId>ru.ilb.common</groupId>
         <artifactId>common</artifactId>
         <version>1.31-SNAPSHOT</version>
-    </parent>    
+    </parent>
     <groupId>ru.ilb.common</groupId>
     <artifactId>common-jaxrs</artifactId>
     <version>1.31-SNAPSHOT</version>

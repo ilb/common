@@ -90,7 +90,7 @@ public class DescriptorUtils {
     public Map<Object, Object> mapById(List<Object> srcList) {
         return srcList.stream().collect(Collectors.toMap(o -> getPrimaryKeyValue(o), o -> o));
     }
-    
+
     /**
      * Get primary key value of entity
      * @param object

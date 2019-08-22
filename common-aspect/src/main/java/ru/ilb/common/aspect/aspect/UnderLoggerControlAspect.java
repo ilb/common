@@ -37,6 +37,7 @@ import ru.ilb.common.aspect.statelogger.StateLoggerFactory;
 @Aspect
 @Component
 public class UnderLoggerControlAspect {
+
     protected static final Logger LOG = LoggerFactory.getLogger(UnderLoggerControlAspect.class);
 
     @Autowired
@@ -52,15 +53,15 @@ public class UnderLoggerControlAspect {
             stateLogger.start();
             stateLogger.working(0L, null);
         }
-		Object value = null;
-		try {
-			value = proceedingJoinPoint.proceed();
-		} catch (Throwable e) {
+        Object value = null;
+        try {
+            value = proceedingJoinPoint.proceed();
+        } catch (Throwable e) {
             if (stateLogger != null) {
                 stateLogger.working(-1L, e.getMessage());
             }
             throw e;
-		}
+        }
         if (stateLogger != null) {
             stateLogger.end();
         }
@@ -74,7 +75,6 @@ public class UnderLoggerControlAspect {
             serverAdminNotifier.sendMail(joinPoint, exp);
         }
     }
-
 
     @PostConstruct
     public void init() {

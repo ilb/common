@@ -25,7 +25,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 /**
  * Calls HistoryCustomizer.customize on all entities with @AutoHistory annotation
- * Usage: persistance.xml 
+ * Usage: persistance.xml
  * &lt;property name="eclipselink.session.customizer" value="ru.ilb.common.jpa.history.HistorySessionCustomizer"/>
  * @author slavb
  */

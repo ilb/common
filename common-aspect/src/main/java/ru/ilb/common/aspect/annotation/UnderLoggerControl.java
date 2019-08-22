@@ -28,7 +28,7 @@ import ru.ilb.common.aspect.statelogger.BaseStateLogger;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface UnderLoggerControl {
-	static final String DEFAULT_CONTROL_NAME = "default";
+    static final String DEFAULT_CONTROL_NAME = "default";
 
     /**
      * Класс логгер для формирования сообщений. Не обязательный

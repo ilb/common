@@ -45,8 +45,8 @@ public class LocalDateTimeXmlAdapter extends XmlAdapter<String, LocalDateTime> {
         } catch (Exception ex) {
         }
         try {
-            /* for ISO_ZONED_DATE_TIME 	Zoned Date Time 	'2011-12-03T10:15:30+01:00[Europe/Paris]'
-                   ISO_DATE_TIME 	Date and time with ZoneId 	'2011-12-03T10:15:30+01:00[Europe/Paris]'
+            /* for ISO_ZONED_DATE_TIME  Zoned Date Time           '2011-12-03T10:15:30+01:00[Europe/Paris]'
+                   ISO_DATE_TIME        Date and time with ZoneId '2011-12-03T10:15:30+01:00[Europe/Paris]'
             */
             ZonedDateTime parsedDateTime = ZonedDateTime.parse(value, DateTimeFormatter.ISO_ZONED_DATE_TIME);
             ZoneId zid = parsedDateTime.getZone() == null ? ZoneId.systemDefault() : parsedDateTime.getZone();

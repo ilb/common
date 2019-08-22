@@ -29,5 +29,5 @@ public class EclipseLinkUtils {
         }
         return result;
     }
-    
+
 }

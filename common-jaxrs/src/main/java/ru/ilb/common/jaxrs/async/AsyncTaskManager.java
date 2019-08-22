@@ -82,7 +82,7 @@ public class AsyncTaskManager  {
             Response response = Response.seeOther(uri.build()).build();
             return response;
     }
-    
+
     public Response wait(String taskId, UriInfo uriInfo, String i) {
             AsyncTask task = get(taskId);
             Response response;
@@ -119,9 +119,9 @@ public class AsyncTaskManager  {
                 }
             }
             return response;
-        
+
     }
-    
+
     public Response cancel(String taskId) {
             AsyncTask task = get(taskId);
             Response response;

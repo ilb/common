@@ -31,7 +31,7 @@ public interface CacheableJpaRepository<T, ID extends Serializable> extends
         JpaRepository<T, ID> {
 
     List<T> findAllCache();
-    
+
     void fillCache(List<T> items);
 
 
