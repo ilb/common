@@ -5,6 +5,7 @@ import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.jaxrs.provider.XSLTJaxbProvider;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -81,12 +82,12 @@ public class ILBAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public XSLTJaxbProvider xsltJaxbProvider() {
+    public XSLTJaxbProvider xsltJaxbProvider(@Value("${refreshTemplates:false}") Boolean refreshTemplates) {
         XSLTJaxbProvider xsltJaxbProvider = new XSLTJaxbProvider();
         xsltJaxbProvider.setResolver(new ServletContextURIResolver());
         xsltJaxbProvider.setProduceMediaTypes(Arrays.asList(properties.getXslt().getProduces()));
         // development profile: reload  xslt files on each transformation
-        //xsltJaxbProvider.setRefreshTemplates(env.acceptsProfiles(Profiles.of(ILBProfile.DEVELOPMENT.value())));
+        xsltJaxbProvider.setRefreshTemplates(refreshTemplates);
         return xsltJaxbProvider;
     }
 }
