@@ -17,8 +17,6 @@ import org.springframework.core.env.Environment;
 import ru.ilb.common.jaxrs.async.AsyncTaskManager;
 import ru.ilb.common.jaxrs.jaxb.JaxbContextResolver;
 import ru.ilb.common.jaxrs.xml.transform.ServletContextURIResolver;
-import ru.ilb.common.jpa.tools.DescriptorUtils;
-import ru.ilb.common.jpa.tools.RepositoryPopulator;
 
 /**
  *
@@ -68,17 +66,17 @@ public class ILBAutoConfiguration {
         return new AsyncTaskManager();
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    RepositoryPopulator repositoryPopulator() {
-        return new RepositoryPopulator();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    DescriptorUtils descriptorUtils() {
-        return new DescriptorUtils();
-    }
+//    @Bean
+//    @ConditionalOnMissingBean
+//    RepositoryPopulator repositoryPopulator() {
+//        return new RepositoryPopulator();
+//    }
+//
+//    @Bean
+//    @ConditionalOnMissingBean
+//    DescriptorUtils descriptorUtils() {
+//        return new DescriptorUtils();
+//    }
 
     @Bean
     @ConditionalOnMissingBean
