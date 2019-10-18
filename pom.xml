@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.ilb.common</groupId>
     <artifactId>common</artifactId>
-    <version>1.31-SNAPSHOT</version>
+    <version>1.31</version>
     <packaging>pom</packaging>
     <name>common</name>
     <description>Various jaxrs, jpa and jaxb support classes</description>
@@ -38,8 +38,8 @@
     </scm>
     -->
     <scm>
-        <connection>scm:svn:https://svn.ilb.ru/repos/common/trunk</connection>
-        <url>https://svn.ilb.ru/viewvc/common/</url>
+        <connection>scm:svn:https://svn.ilb.ru/repos/common/tags/common-1.31</connection>
+        <url>https://svn.ilb.ru/viewvc/common/tags/common-1.31</url>
     </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
