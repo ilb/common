@@ -4,7 +4,7 @@
     <parent>
         <groupId>ru.ilb.common</groupId>
         <artifactId>common</artifactId>
-        <version>1.31-SNAPSHOT</version>
+        <version>1.31</version>
     </parent>
     <artifactId>common-springboot</artifactId>
     <packaging>jar</packaging>
