@@ -113,6 +113,8 @@ public abstract class Jndi {
                 return Integer.valueOf(envEntryType.getEnvEntryValue().getValue());
             case "java.lang.Double":
                 return Double.valueOf(envEntryType.getEnvEntryValue().getValue());
+            case "java.lang.Long":
+                return Long.valueOf(envEntryType.getEnvEntryValue().getValue());
             default:
                 return envEntryType.getEnvEntryValue().getValue();
         }
