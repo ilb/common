@@ -39,6 +39,8 @@ public class ILBProperties {
     public static class XSLTProperties {
         private String produces = "application/xhtml+xml,text/csv,application/pdf";
 
+        private Boolean secureProcessing = false;
+
         public String getProduces() {
             return produces;
         }
@@ -47,6 +49,13 @@ public class ILBProperties {
             this.produces = produces;
         }
 
+        public Boolean getSecureProcessing() {
+            return secureProcessing;
+        }
+
+        public void setSecureProcessing(Boolean secureProcessing) {
+            this.secureProcessing = secureProcessing;
+        }
 
     }
 

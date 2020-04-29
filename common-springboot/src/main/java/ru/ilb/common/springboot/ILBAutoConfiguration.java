@@ -84,7 +84,7 @@ public class ILBAutoConfiguration {
         XSLTJaxbProvider xsltJaxbProvider = new XSLTJaxbProvider();
         xsltJaxbProvider.setResolver(new ServletContextURIResolver());
         xsltJaxbProvider.setProduceMediaTypes(Arrays.asList(properties.getXslt().getProduces()));
-        xsltJaxbProvider.setSecureProcessing(false);
+        xsltJaxbProvider.setSecureProcessing(properties.getXslt().getSecureProcessing());
         // development profile: reload  xslt files on each transformation
         xsltJaxbProvider.setRefreshTemplates(refreshTemplates);
         return xsltJaxbProvider;
