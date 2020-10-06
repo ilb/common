@@ -4,6 +4,7 @@ import java.util.Arrays;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.jaxrs.provider.XSLTJaxbProvider;
 import org.apache.cxf.transport.servlet.CXFServlet;
+import org.eclipse.persistence.jaxb.rs.MOXyJsonProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -39,10 +40,8 @@ public class ILBAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ru.ilb.common.jaxrs.json.MOXyJsonProvider jsonProvider() {
-        // lacks @Provider annotation
-        // return new org.eclipse.persistence.jaxb.rs.MOXyJsonProvider();
-        return new ru.ilb.common.jaxrs.json.MOXyJsonProvider();
+    public MOXyJsonProvider jsonProvider() {
+        return new MOXyJsonProvider();
     }
 
     @Bean

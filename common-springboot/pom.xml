@@ -28,6 +28,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.moxy</artifactId>
+            <version>${eclipselink.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>common-jpa</artifactId>
             <version>${project.version}</version>
