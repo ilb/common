@@ -1,0 +1,7 @@
+/target/
+/common-jaxb/target/
+/common-jaxrs/target/
+/common-aspect/target/
+/common-jpa/target/
+/common-test/target/
+/common-springboot/target/
