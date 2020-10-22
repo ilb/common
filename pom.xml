@@ -30,16 +30,10 @@
             <email>github@bystrobank.ru</email>
         </developer>
     </developers>
-    <!-- GITHUB MIRROR
     <scm>
-        <connection>scm:git:https://github.com/ilb/${project.name}.git</connection>
-        <url>https://github.com/ilb/${project.name}</url>
+        <connection>scm:git:https://git.ilb.ru/ilb.ru/common.git</connection>
+        <url>https://git.ilb.ru/ilb.ru/common</url>
         <tag>HEAD</tag>
-    </scm>
-    -->
-    <scm>
-        <connection>scm:svn:https://svn.ilb.ru/repos/common/trunk</connection>
-        <url>https://svn.ilb.ru/viewvc/common/</url>
     </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
