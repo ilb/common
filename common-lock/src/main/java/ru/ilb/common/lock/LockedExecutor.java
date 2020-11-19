@@ -16,7 +16,6 @@
 package ru.ilb.common.lock;
 
 import java.util.concurrent.locks.StampedLock;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -35,25 +34,38 @@ public class LockedExecutor {
         this.lockFactory = lockFactory;
     }
 
-    public void execute(String lockKey, BooleanSupplier check, Runnable execute) {
+    public void execute(String lockKey, Checker check, Builder execute) {
         execute(() -> lockFactory.getLock(lockKey), check, execute);
     }
 
-    public void execute(Supplier<StampedLock> lockSupplier, BooleanSupplier check, Runnable execute) {
-
+    public void execute(Supplier<StampedLock> lockSupplier, Checker check, Builder execute) {
         StampedLock lock = lockSupplier.get();
         long stamp = lock.readLock();
         try {
-            if (!check.getAsBoolean()) {
+            if (!check.valid()) {
                 stamp = lock.tryConvertToWriteLock(stamp);
                 if (stamp == 0L) {
                     stamp = lock.writeLock();
                 }
                 execute.run();
             }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         } finally {
             lock.unlock(stamp);
         }
 
+    }
+
+    @FunctionalInterface
+    public static interface Checker {
+
+        public boolean valid() throws Exception;
+    }
+
+    @FunctionalInterface
+    public static interface Builder {
+
+        public void run() throws Exception;
     }
 }

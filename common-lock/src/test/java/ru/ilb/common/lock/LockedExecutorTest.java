@@ -16,7 +16,6 @@
 package ru.ilb.common.lock;
 
 import java.util.concurrent.locks.StampedLock;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
@@ -43,16 +42,15 @@ public class LockedExecutorTest {
         String lockKey = "test";
         Supplier<StampedLock> lockSupplier = () -> LOCK_FACTORY.getLock(lockKey);
         boolean valid = true;
-        BooleanSupplier check = () -> valid;
-        Runnable execute = () -> {
-            testvar = 2;
-        };
         testvar = 0;
         LockedExecutor instance = new LockedExecutor();
-        instance.execute(lockSupplier, check, execute);
+        instance.execute(lockSupplier,
+                () -> valid,
+                () -> testvar = 2);
         assertEquals(0, testvar);
-        check = () -> false;
-        instance.execute(lockSupplier, check, execute);
+        instance.execute(lockSupplier,
+                () -> false,
+                () -> testvar = 2);
         assertEquals(2, testvar);
     }
 
@@ -61,16 +59,15 @@ public class LockedExecutorTest {
         System.out.println("execute");
         String lockKey = "test";
         boolean valid = true;
-        BooleanSupplier check = () -> valid;
-        Runnable execute = () -> {
-            testvar = 2;
-        };
         testvar = 0;
         LockedExecutor instance = new LockedExecutor();
-        instance.execute(lockKey, check, execute);
+        instance.execute(lockKey,
+                () -> valid,
+                () -> testvar = 2);
         assertEquals(0, testvar);
-        check = () -> false;
-        instance.execute(lockKey, check, execute);
+        instance.execute(lockKey,
+                () -> false,
+                () -> testvar = 2);
         assertEquals(2, testvar);
     }
 }
