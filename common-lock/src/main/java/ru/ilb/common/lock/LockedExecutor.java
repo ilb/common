@@ -19,6 +19,7 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.Supplier;
 
 /**
+ * Execute code using read-write lock
  *
  * @author slavb
  */
@@ -34,10 +35,24 @@ public class LockedExecutor {
         this.lockFactory = lockFactory;
     }
 
+    /**
+     * Execute code using lock key
+     *
+     * @param lockKey key for lock
+     * @param check function to check validity of result
+     * @param execute function to rebuild result
+     */
     public void execute(String lockKey, Checker check, Builder execute) {
         execute(() -> lockFactory.getLock(lockKey), check, execute);
     }
 
+    /**
+     * Execute code using lock suplier
+     *
+     * @param lockSupplier supplier of lock
+     * @param check function to check validity of result
+     * @param execute function to rebuild result
+     */
     public void execute(Supplier<StampedLock> lockSupplier, Checker check, Builder execute) {
         StampedLock lock = lockSupplier.get();
         long stamp = lock.readLock();
