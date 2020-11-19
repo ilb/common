@@ -15,6 +15,7 @@
         <module>common-aspect</module>
         <module>common-test</module>
         <module>common-springboot</module>
+        <module>common-lock</module>
     </modules>
     <licenses>
         <license>

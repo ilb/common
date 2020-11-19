@@ -3,6 +3,9 @@ Various jaxrs support classes: XmlAdapters, ParamConverterProviders for core jav
 
 ## Changelog
 
+### common-1.35
+added common-lock module with ReadWriteLockFactory and StampedLockFactory
+
 ### common-1.34
 removed obsolete MOXyJsonProvider, stock org.eclipse.persistence.jaxb.rs.MOXyJsonProvider should be used
 with eclipselink v2.7.5+
