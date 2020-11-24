@@ -20,6 +20,7 @@ import java.util.GregorianCalendar;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+//CHECKSTYLE:OFF
 public class DateTimeXmlAdapter extends XmlAdapter<String, Date> {
 
     @Override
@@ -41,3 +42,4 @@ public class DateTimeXmlAdapter extends XmlAdapter<String, Date> {
     }
 
 }
+//CHECKSTYLE:ON

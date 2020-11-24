@@ -34,31 +34,31 @@ import org.springframework.stereotype.Component;
 public class ServerAdminNotifier {
 
     private String getServerAdmin() {
-        String server_admin = null;
+        String serverAdmin = null;
         //из запроса, из окружения апача
         //server_admin = (String) request.getAttribute("SERVER_ADMIN");
         //из окружения приложения, у сервера или контекста приложения
-        if (server_admin == null) {
+        if (serverAdmin == null) {
             try {
                 Context initCtx = new InitialContext();
                 Context envCtx = (Context) initCtx.lookup("java:comp/env");
-                server_admin = (String) envCtx.lookup("SERVER_ADMIN");
+                serverAdmin = (String) envCtx.lookup("SERVER_ADMIN");
             } catch (Exception e) {
             }
         }
         //из системной проперти, у томката-жре
-        if (server_admin == null) {
-            server_admin = System.getProperty("SERVER_ADMIN");
+        if (serverAdmin == null) {
+            serverAdmin = System.getProperty("SERVER_ADMIN");
         }
         //напоследок пытаемся из системного окружения
-        if (server_admin == null) {
-            server_admin = System.getenv("SERVER_ADMIN");
+        if (serverAdmin == null) {
+            serverAdmin = System.getenv("SERVER_ADMIN");
         }
         //если уж вообще ничего не найдем - root
-        if (server_admin == null) {
-            server_admin = "root";
+        if (serverAdmin == null) {
+            serverAdmin = "root";
         }
-        return server_admin;
+        return serverAdmin;
     }
 
     private String getMailMsg(final JoinPoint joinPoint, final Exception ex) {
@@ -79,7 +79,7 @@ public class ServerAdminNotifier {
             StringWriter writer = new StringWriter();
             ex.printStackTrace(new PrintWriter(writer));
             String trace = writer.toString();
-            int line2 = trace.indexOf("\n");
+            int line2 = trace.indexOf('\n');
             mailMsg = "To: " + getServerAdmin() + "\n" //From правильный sendmail сам подставит
                     + "Subject: [JAVA FATAL ERROR] in " + methodName + ": " + threadid + "\n"
                     + "Content-Type: text/plain; charset=UTF-8\n\n"

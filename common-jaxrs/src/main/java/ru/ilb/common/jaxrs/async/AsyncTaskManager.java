@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -33,11 +32,10 @@ import javax.ws.rs.core.UriInfo;
  *
  * @author slavb
  */
-public class AsyncTaskManager  {
+public class AsyncTaskManager {
 
     private final Map<String, AsyncTask> tasks = new ConcurrentHashMap<>();
     private final ExecutorService taskExecutor = Executors.newCachedThreadPool();
-
 
     public void destroy() {
         for (Map.Entry<String, AsyncTask> entry : tasks.entrySet()) {
@@ -67,75 +65,76 @@ public class AsyncTaskManager  {
         String taskId = queryParams.getFirst("taskId");
         String i = queryParams.getFirst("i");
         if ("wait".equals(mode)) {
-            response=wait(taskId, uriInfo, i);
+            response = wait(taskId, uriInfo, i);
         } else if ("cancel".equals(mode)) {
-            response=cancel(taskId);
+            response = cancel(taskId);
         } else {
-            response=submit(clbl, uriInfo);
+            response = submit(clbl, uriInfo);
         }
         return response;
 
     }
+
     public Response submit(Callable clbl, UriInfo uriInfo) {
-            AsyncTask task = submit(clbl);
-            UriBuilder uri = uriInfo.getAbsolutePathBuilder().queryParam("mode", "wait").queryParam("taskId", task.getTaskId()).queryParam("i", 0);
-            Response response = Response.seeOther(uri.build()).build();
-            return response;
+        AsyncTask task = submit(clbl);
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder().queryParam("mode", "wait").queryParam("taskId", task.getTaskId()).queryParam("i", 0);
+        Response response = Response.seeOther(uri.build()).build();
+        return response;
     }
 
     public Response wait(String taskId, UriInfo uriInfo, String i) {
-            AsyncTask task = get(taskId);
-            Response response;
-            if (task == null) {
-                //Returns 410, “Gone” if job doesn’t exist anymore
-                response = Response.status(Response.Status.GONE).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " не найдена").build();
+        AsyncTask task = get(taskId);
+        Response response;
+        if (task == null) {
+            //Returns 410, “Gone” if job doesn’t exist anymore
+            response = Response.status(Response.Status.GONE).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " не найдена").build();
 
-            } else if (!task.getFuture().isDone()) {
-                UriBuilder uri = uriInfo.getAbsolutePathBuilder().queryParam("mode", "wait").queryParam("taskId", taskId);
-                if(i!=null){
-                    uri=uri.queryParam("i", Integer.parseInt(i) + 1);
+        } else if (!task.getFuture().isDone()) {
+            UriBuilder uri = uriInfo.getAbsolutePathBuilder().queryParam("mode", "wait").queryParam("taskId", taskId);
+            if (i != null) {
+                uri = uri.queryParam("i", Integer.parseInt(i) + 1);
+            }
+            response = Response.status(Response.Status.ACCEPTED).type("text/plain; charset=UTF-8").entity("Выполняется.. ").header("Refresh", "2;" + uri.build().toString()).build();
+        } else {
+            try {
+                if (task.getFuture().get() instanceof Response) {
+                    response = (Response) task.getFuture().get();
+                } else {
+                    response = Response.status(Response.Status.OK).entity(task.getFuture().get()).type("application/xml").build();
                 }
-                response = Response.status(Response.Status.ACCEPTED).type("text/plain; charset=UTF-8").entity("Выполняется.. ").header("Refresh", "2;" + uri.build().toString()).build();
-            } else {
-                try {
-                    if (task.getFuture().get() instanceof Response) {
-                        response = (Response) task.getFuture().get();
+                remove(taskId);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            } catch (ExecutionException ex) {
+                if (ex.getCause() != null) {
+                    if (ex.getCause() instanceof RuntimeException) {
+                        throw (RuntimeException) ex.getCause();
                     } else {
-                        response = Response.status(Response.Status.OK).entity(task.getFuture().get()).type("application/xml").build();
+                        throw new RuntimeException(ex.getCause());
                     }
-                    remove(taskId);
-                } catch (InterruptedException ex) {
+                } else {
                     throw new RuntimeException(ex);
-                } catch (ExecutionException ex) {
-                    if (ex.getCause() != null) {
-                        if(ex.getCause() instanceof RuntimeException ){
-                            throw (RuntimeException) ex.getCause();
-                        }else {
-                            throw new RuntimeException(ex.getCause());
-                        }
-                    } else {
-                        throw new RuntimeException(ex);
-                    }
                 }
             }
-            return response;
+        }
+        return response;
 
     }
 
     public Response cancel(String taskId) {
-            AsyncTask task = get(taskId);
-            Response response;
-            if (task == null) {
-                //Returns 410, “Gone” if job doesn’t exist anymore
-                response = Response.status(Response.Status.GONE).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " не найдена").build();
+        AsyncTask task = get(taskId);
+        Response response;
+        if (task == null) {
+            //Returns 410, “Gone” if job doesn’t exist anymore
+            response = Response.status(Response.Status.GONE).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " не найдена").build();
 
-            } else if (!task.getFuture().isDone()) {
-                task.getFuture().cancel(true);
-                response = Response.status(Response.Status.OK).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " отменена").build();
-                remove(taskId);
-            } else {
-                response = Response.status(Response.Status.OK).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " уже завершена").build();
-            }
+        } else if (!task.getFuture().isDone()) {
+            task.getFuture().cancel(true);
+            response = Response.status(Response.Status.OK).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " отменена").build();
+            remove(taskId);
+        } else {
+            response = Response.status(Response.Status.OK).type("text/plain; charset=UTF-8").entity("Задача " + taskId + " уже завершена").build();
+        }
         return response;
     }
 

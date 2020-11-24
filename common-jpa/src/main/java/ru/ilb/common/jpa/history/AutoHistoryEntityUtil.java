@@ -47,20 +47,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Automate history dynamic entities creation
+ *
  * @author slavb
  */
 public class AutoHistoryEntityUtil {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AutoHistoryEntityUtil.class);
 
-    private final static String SEQ_GEN_HIST_IDENTITY="SEQ_GEN_HIST_IDENTITY";
+    private static final String SEQ_GEN_HIST_IDENTITY = "SEQ_GEN_HIST_IDENTITY";
 
     Session session;
 
 //    public void setEntityManager(EntityManager entityManager) {
 //        session = entityManager.unwrap(Session.class);
 //    }
-
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         session = JpaHelper.getServerSession(entityManagerFactory);
     }
@@ -73,11 +73,12 @@ public class AutoHistoryEntityUtil {
                 .filter(d -> AnnotationUtils.getAnnotation(d.getJavaClass(), AutoHistory.class) != null)
                 .collect(Collectors.toList());
 
-        createHistoryEntities((DatabaseSession) session,descriptors);
+        createHistoryEntities((DatabaseSession) session, descriptors);
     }
 
     /**
      * Create dynamic history entities
+     *
      * @param session
      * @param descriptors
      */
@@ -89,10 +90,10 @@ public class AutoHistoryEntityUtil {
         if (!types.isEmpty()) {
             boolean createMissingTables = false;
             boolean generateFKConstraints = false;
-            NativeSequence sequence = new NativeSequence(SEQ_GEN_HIST_IDENTITY,true);
+            NativeSequence sequence = new NativeSequence(SEQ_GEN_HIST_IDENTITY, true);
             session.getDatasourcePlatform().addSequence(sequence);
 
-            addTypes(session, createMissingTables, generateFKConstraints, types.toArray(new DynamicType[types.size()]));
+            addTypes(session, createMissingTables, generateFKConstraints, types.toArray(new DynamicType[0]));
             createTables(session, generateFKConstraints);
         }
 
@@ -100,6 +101,7 @@ public class AutoHistoryEntityUtil {
 
     /**
      * Adds dynamic types to database session
+     *
      * @param session
      * @param createMissingTables
      * @param generateFKConstraints
@@ -117,6 +119,7 @@ public class AutoHistoryEntityUtil {
 
     /**
      * create tables with create-or-extend mode
+     *
      * @param session
      * @param generateFKConstraints
      */
@@ -127,7 +130,7 @@ public class AutoHistoryEntityUtil {
 
         DynamicSchemaManager dsm = new DynamicSchemaManager(session);
 
-        TableCreator creator = new DefaultTableGenerator(session.getProject(), generateFKConstraints).generateFilteredDefaultTableCreator((AbstractSession)session);
+        TableCreator creator = new DefaultTableGenerator(session.getProject(), generateFKConstraints).generateFilteredDefaultTableCreator((AbstractSession) session);
         creator.setIgnoreDatabaseException(true);
         creator.extendTables((DatabaseSession) session, dsm);
 
@@ -136,6 +139,7 @@ public class AutoHistoryEntityUtil {
     /**
      * Create history dynamic type based on ClassDescriptor
      * Adds HISTID, ROWSTART, ROWEND columns, indexes, and copies all direct and *ToOne mappings from base entity
+     *
      * @param descriptor
      * @param dcl
      * @return
@@ -183,9 +187,9 @@ public class AutoHistoryEntityUtil {
                 .map(m -> convertMapping(m))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        mappings.forEach((m) -> {
+        mappings.forEach(m -> {
             if (DirectToFieldMapping.class.equals(m.getClass())) {
-                LOG.debug("Table "+tableName+" adding DirectToFieldMapping " + m.getAttributeName());
+                LOG.debug("Table " + tableName + " adding DirectToFieldMapping " + m.getAttributeName());
                 //builder.addDirectMapping(m.getAttributeName(), m.getAttributeClassification(), m.getField().getName());
                 builder.addMapping(m);
                 fieldNames.remove(m.getField().getName());
@@ -194,13 +198,13 @@ public class AutoHistoryEntityUtil {
                     OneToOneMapping oom = (OneToOneMapping) m;
                     oom.getSourceToTargetKeyFields().entrySet().stream().filter(entr -> fieldNames.contains(entr.getKey().getName())).forEach(entr -> fieldNames.remove(entr.getKey().getName()));
                 }
-                LOG.debug("Table "+tableName+" adding OneToOneMapping " + m.getAttributeName());
+                LOG.debug("Table " + tableName + " adding OneToOneMapping " + m.getAttributeName());
                 builder.addMapping(m);
             }
         });
 
-        if(!fieldNames.isEmpty()){
-            fields.stream().filter((df) -> (fieldNames.contains(df.getName()))).forEachOrdered((df) -> {
+        if (!fieldNames.isEmpty()) {
+            fields.stream().filter(df -> fieldNames.contains(df.getName())).forEachOrdered(df -> {
                 //каждому DTYPE устанавливаем его тип
                 builder.addDirectMapping(df.getName().toLowerCase(), df.getType(), df.getName());
             });
@@ -210,6 +214,7 @@ public class AutoHistoryEntityUtil {
 
     /**
      * Converts DatabaseMapping
+     *
      * @param src
      * @return
      */
@@ -226,18 +231,19 @@ public class AutoHistoryEntityUtil {
 
     /**
      * Converts DirectToFieldMapping
+     *
      * @param src
      * @return
      */
     private DatabaseMapping convertMapping(DirectToFieldMapping src) {
         DirectToFieldMapping mapping = new DirectToFieldMapping();
-        if(java.time.LocalDate.class.equals(src.getAttributeClassification())){
+        if (java.time.LocalDate.class.equals(src.getAttributeClassification())) {
             mapping.setAttributeClassification(java.sql.Date.class);
-        }else if(java.time.LocalDateTime.class.equals(src.getAttributeClassification())){
+        } else if (java.time.LocalDateTime.class.equals(src.getAttributeClassification())) {
             mapping.setAttributeClassification(java.sql.Timestamp.class);
-        }else if(java.util.UUID.class.equals(src.getAttributeClassification())){
+        } else if (java.util.UUID.class.equals(src.getAttributeClassification())) {
             mapping.setAttributeClassification(java.sql.Blob.class);
-        }else{
+        } else {
             mapping.setAttributeClassification(src.getAttributeClassification());
         }
         mapping.setAttributeName(src.getAttributeName());
@@ -248,6 +254,7 @@ public class AutoHistoryEntityUtil {
 
     /**
      * Converts *ToOne mapping
+     *
      * @param src
      * @return
      */

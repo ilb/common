@@ -83,11 +83,14 @@ import org.springframework.beans.factory.FactoryBean;
  */
 public class PersistancePropertiesFactoryBean implements FactoryBean<Map> {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PersistancePropertiesFactoryBean.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(PersistancePropertiesFactoryBean.class);
 
     private String model;
     private String data;
     private DataSource dataSource;
+
+    private Map<String, byte[]> checksumMap;
+    private Map<String, Object> propertyMap;
 
     public void setModel(String model) {
         this.model = model;
@@ -100,9 +103,6 @@ public class PersistancePropertiesFactoryBean implements FactoryBean<Map> {
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
-    private Map<String, byte[]> checksumMap;
-    private Map<String, Object> propertyMap;
 
     /**
      * Получение контрольной суммы файла
@@ -117,7 +117,10 @@ public class PersistancePropertiesFactoryBean implements FactoryBean<Map> {
             try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(file);
                     DigestInputStream dis = new DigestInputStream(is, md)) {
                 byte[] buffer = new byte[1024];
-                while (dis.read(buffer) != -1);
+                //CHECKSTYLE:OFF
+                while (dis.read(buffer) != -1) {
+                }
+                //CHECKSTYLE:ON
             }
         } catch (NoSuchAlgorithmException | IOException e) {
             throw new RuntimeException(e);
@@ -207,7 +210,7 @@ public class PersistancePropertiesFactoryBean implements FactoryBean<Map> {
 
     @Override
     public Map getObject() throws Exception {
-        logger.info(">>>START set persistence properties");
+        LOG.info(">>>START set persistence properties");
         if (propertyMap == null) {
             propertyMap = new HashMap<>();
         }
@@ -225,16 +228,16 @@ public class PersistancePropertiesFactoryBean implements FactoryBean<Map> {
                 if (!Arrays.equals(pair.getValue(), oldCheckSum)) {
                     setProperty(pair.getKey());
                     updateCheckSumInDB(pair.getKey(), pair.getValue());
-                    logger.info(">>> У файла {} checkSum изменилась, устанавливаем соответствующее property", pair.getKey());
+                    LOG.info(">>> У файла {} checkSum изменилась, устанавливаем соответствующее property", pair.getKey());
                 } else {
-                    logger.info(">>> У файла {} checkSum не изменилась", pair.getKey());
+                    LOG.info(">>> У файла {} checkSum не изменилась", pair.getKey());
                 }
             } else {
                 setProperty(pair.getKey());
                 insertCheckSumInDB(pair.getKey(), pair.getValue());
             }
         }
-        logger.info(">>>END set persistence properties");
+        LOG.info(">>>END set persistence properties");
         return this.propertyMap;
     }
 

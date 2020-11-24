@@ -28,7 +28,7 @@ public class UUIDConverterString implements AttributeConverter<UUID, String> {
 
     @Override
     public String convertToDatabaseColumn(UUID uuid) {
-        if(uuid == null){
+        if (uuid == null) {
             return null;
         }
         return uuid.toString();
@@ -36,7 +36,7 @@ public class UUIDConverterString implements AttributeConverter<UUID, String> {
 
     @Override
     public UUID convertToEntityAttribute(String uuid) {
-        if(uuid == null || uuid.length() == 0){
+        if (uuid == null || uuid.length() == 0) {
             return null;
         }
         return UUID.fromString(uuid);

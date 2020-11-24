@@ -23,10 +23,10 @@ import java.time.format.DateTimeFormatter;
  * @author shadrin_nv
  */
 public class ZabbixStateLogger extends StateFileLogger {
-    private final String zabbixLogFormat = "%s:::%s:::%s:::%s";
-    private final String start = "START";
-    private final String working = "WORKING";
-    private final String end = "END";
+    private static final String ZABBIX_LOG_FORMAT = "%s:::%s:::%s:::%s";
+    private static final String START = "START";
+    private static final String WORKING = "WORKING";
+    private static final String END = "END";
 
 
     @Override
@@ -37,17 +37,17 @@ public class ZabbixStateLogger extends StateFileLogger {
 
     @Override
     public void start() {
-        saveToFile(getZabbixLogFormattedString(start, null, null));
+        saveToFile(getZabbixLogFormattedString(START, null, null));
     }
 
     @Override
     public void working(Long errorCode, String msg) {
-        saveToFile(getZabbixLogFormattedString(working, errorCode, msg));
+        saveToFile(getZabbixLogFormattedString(WORKING, errorCode, msg));
     }
 
     @Override
     public void end() {
-        saveToFile(getZabbixLogFormattedString(end, null, null));
+        saveToFile(getZabbixLogFormattedString(END, null, null));
     }
 
     private String getZabbixLogFormattedString(String state, Long errorCode, String msg) {
@@ -56,7 +56,7 @@ public class ZabbixStateLogger extends StateFileLogger {
         * <StatusMsg> - START, WORKING, END
         * <ErrorCode> 0 - норма, отрицательные - системные, положительные - приложения
         */
-        return String.format(zabbixLogFormat,
+        return String.format(ZABBIX_LOG_FORMAT,
                 DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()),
                 state,
                 errorCode == null ? 0 : errorCode,

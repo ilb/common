@@ -25,14 +25,14 @@ import javax.ws.rs.ext.ParamConverter;
  */
 public class LocalDateParamConverter implements ParamConverter<LocalDate> {
 
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Override
     public LocalDate fromString(String value) {
         if (value == null || value.length() == 0) {
             return null;
         }
-        return LocalDate.parse(value, DATE_FORMAT);
+        return LocalDate.parse(value, dateFormat);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class LocalDateParamConverter implements ParamConverter<LocalDate> {
         if (value == null) {
             return null;
         }
-        return DATE_FORMAT.format(value);
+        return dateFormat.format(value);
 
     }
 }

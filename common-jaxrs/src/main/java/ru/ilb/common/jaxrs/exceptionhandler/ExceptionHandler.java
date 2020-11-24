@@ -25,7 +25,8 @@ import javax.ws.rs.ext.ExceptionMapper;
  *
  * @author slavb
  */
-public class ExceptionHandler implements ExceptionMapper<Exception>{
+public class ExceptionHandler implements ExceptionMapper<Exception> {
+
     private static final Logger LOG = Logger.getLogger(ExceptionHandler.class.getName());
 
     @Override

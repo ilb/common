@@ -33,7 +33,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import ru.ilb.common.jpa.annotations.AutoPopulableRepository;
@@ -77,7 +76,7 @@ public class RepositoryPopulator {
     }
 
     public static List getEntities(Class repositoryInterface) {
-        ParameterizedType baseInterface = ((ParameterizedType) repositoryInterface.getGenericInterfaces()[0]);
+        ParameterizedType baseInterface = (ParameterizedType) repositoryInterface.getGenericInterfaces()[0];
         Type objectType = baseInterface.getActualTypeArguments()[0];
 
         //List of static fields with entity instances

@@ -32,7 +32,7 @@ import javax.xml.transform.stream.StreamSource;
  *
  * @author slavb
  */
-public class JaxbUtil {
+public final class JaxbUtil {
 
     private static final String MEDIA_TYPE = "eclipselink.media-type";
     private static final String JSON_INCLUDE_ROOT = "eclipselink.json.include-root";

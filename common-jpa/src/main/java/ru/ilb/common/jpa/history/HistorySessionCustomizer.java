@@ -27,6 +27,7 @@ import org.springframework.core.annotation.AnnotationUtils;
  * Calls HistoryCustomizer.customize on all entities with @AutoHistory annotation
  * Usage: persistance.xml
  * &lt;property name="eclipselink.session.customizer" value="ru.ilb.common.jpa.history.HistorySessionCustomizer"/>
+ *
  * @author slavb
  */
 public class HistorySessionCustomizer implements SessionCustomizer {
@@ -37,13 +38,14 @@ public class HistorySessionCustomizer implements SessionCustomizer {
         List<ClassDescriptor> descriptors = session.getDescriptors().values().stream()
                 .filter(d -> AnnotationUtils.getAnnotation(d.getJavaClass(), AutoHistory.class) != null)
                 .collect(Collectors.toList());
-        descriptors.stream().forEach(d -> customize(session,d));
+        descriptors.stream().forEach(d -> customize(session, d));
     }
-    private void customize(Session session,ClassDescriptor descriptor) {
+
+    private void customize(Session session, ClassDescriptor descriptor) {
         HistoryPolicy policy = new HistoryPolicy();
         String primaryTable = descriptor.getTableName();
-        if(primaryTable==null){
-            Class parentClass=descriptor.getInheritancePolicy().getParentClass();
+        if (primaryTable == null) {
+            Class parentClass = descriptor.getInheritancePolicy().getParentClass();
             ClassDescriptor parentDescriptor = session.getClassDescriptor(parentClass);
             primaryTable = parentDescriptor.getTableName();
         }

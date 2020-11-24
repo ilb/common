@@ -50,19 +50,19 @@ public class LockedExecutor {
      * Execute code using lock suplier
      *
      * @param lockSupplier supplier of lock
-     * @param check function to check validity of result
-     * @param execute function to rebuild result
+     * @param checker function to check validity of result
+     * @param builder function to rebuild result
      */
-    public void execute(Supplier<StampedLock> lockSupplier, Checker check, Builder execute) {
+    public void execute(Supplier<StampedLock> lockSupplier, Checker checker, Builder builder) {
         StampedLock lock = lockSupplier.get();
         long stamp = lock.readLock();
         try {
-            if (!check.valid()) {
+            if (!checker.valid()) {
                 stamp = lock.tryConvertToWriteLock(stamp);
                 if (stamp == 0L) {
                     stamp = lock.writeLock();
                 }
-                execute.run();
+                builder.run();
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -73,14 +73,14 @@ public class LockedExecutor {
     }
 
     @FunctionalInterface
-    public static interface Checker {
+    interface Checker {
 
-        public boolean valid() throws Exception;
+        boolean valid() throws Exception;
     }
 
     @FunctionalInterface
-    public static interface Builder {
+    interface Builder {
 
-        public void run() throws Exception;
+        void run() throws Exception;
     }
 }

@@ -22,11 +22,11 @@ import java.lang.annotation.Target;
 
 /**
  * Сущность с автоматическим ведением истории
+ *
  * @author slavb
  */
-@Target({ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AutoHistory {
 
 }
-

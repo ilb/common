@@ -28,23 +28,27 @@ import ru.ilb.common.aspect.statelogger.BaseStateLogger;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface UnderLoggerControl {
-    static final String DEFAULT_CONTROL_NAME = "default";
+
+    String DEFAULT_CONTROL_NAME = "default";
 
     /**
      * Класс логгер для формирования сообщений. Не обязательный
+     *
      * @return
      */
-    public Class<?> loggerClass() default BaseStateLogger.class;
+    Class<?> loggerClass() default BaseStateLogger.class;
 
     /**
      * Наименование контроллера.
+     *
      * @return
      */
-    public String controller() default DEFAULT_CONTROL_NAME;
+    String controller() default DEFAULT_CONTROL_NAME;
 
     /**
      * Автоматически уведомлять "админа" об исключении
+     *
      * @return
      */
-    public boolean autoAdminExceptionNotification() default true;
+    boolean autoAdminExceptionNotification() default true;
 }

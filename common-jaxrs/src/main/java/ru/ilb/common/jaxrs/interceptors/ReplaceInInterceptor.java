@@ -50,19 +50,19 @@ public class ReplaceInInterceptor implements ReaderInterceptor {
     }
 
     @Override
-    public Object aroundReadFrom(ReaderInterceptorContext сontext) throws IOException, WebApplicationException {
-        if (replacements != null && mediaType.isCompatible(сontext.getMediaType())) {
-            InputStream inputStream = сontext.getInputStream();
+    public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
+        if (replacements != null && mediaType.isCompatible(context.getMediaType())) {
+            InputStream inputStream = context.getInputStream();
             byte[] bytes = new byte[inputStream.available()];
             inputStream.read(bytes);
             String contents = new String(bytes);
             for (Map.Entry<String, String> keyValue : replacements.entrySet()) {
                 contents = contents.replaceAll(keyValue.getKey(), keyValue.getValue());
             }
-            сontext.setInputStream(new ByteArrayInputStream(contents.getBytes()));
-            return сontext.proceed();
+            context.setInputStream(new ByteArrayInputStream(contents.getBytes()));
+            return context.proceed();
         } else {
-            return сontext.proceed();
+            return context.proceed();
         }
     }
 

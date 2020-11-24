@@ -35,7 +35,7 @@ public abstract class UUIDConverter {
     }
 
     public static UUID bytesToUUID(byte[] bytes) {
-        if(bytes==null || bytes.length==0){
+        if (bytes == null || bytes.length == 0) {
             return null;
         }
         if (bytes.length != 16) {

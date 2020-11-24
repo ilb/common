@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBContext;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
@@ -30,8 +30,8 @@ public class JaxbContextResolver implements ContextResolver<JAXBContext> {
     private static final Logger LOG = Logger.getLogger(JaxbContextResolver.class.getName());
 
     protected Map<String, Object> contextProperties;
-    final protected Map<String, JAXBContext> packageContexts = new HashMap<>();
-    final protected Map<Class<?>, JAXBContext> classContexts = new HashMap<>();
+    protected final Map<String, JAXBContext> packageContexts = new HashMap<>();
+    protected final Map<Class<?>, JAXBContext> classContexts = new HashMap<>();
     protected Class<?>[] extraClass;
 
     public void setContextProperties(Map<String, Object> contextProperties) {
@@ -101,7 +101,7 @@ public class JaxbContextResolver implements ContextResolver<JAXBContext> {
                             for (Class<?> extra : extraClass) {
                                 String extraPackage = getPackageName(extra);
                                 if (!extraPackage.equals(packageName)) {
-                                    sb.append(":").append(extraPackage);
+                                    sb.append(':').append(extraPackage);
                                 }
                             }
                             contextName = sb.toString();

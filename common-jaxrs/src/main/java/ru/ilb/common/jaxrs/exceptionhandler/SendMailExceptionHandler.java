@@ -64,29 +64,29 @@ public class SendMailExceptionHandler implements ExceptionMapper<Exception> {
     }
 
     private String getServerAdmin() {
-        String server_admin = null;
+        String serverAdmin = null;
         // from jndi
-        if (server_admin == null) {
+        if (serverAdmin == null) {
             try {
                 Context initCtx = new InitialContext();
                 Context envCtx = (Context) initCtx.lookup("java:comp/env");
-                server_admin = (String) envCtx.lookup("SERVER_ADMIN");
+                serverAdmin = (String) envCtx.lookup("SERVER_ADMIN");
             } catch (NamingException e) {
             }
         }
         // from system property
-        if (server_admin == null) {
-            server_admin = System.getProperty("SERVER_ADMIN");
+        if (serverAdmin == null) {
+            serverAdmin = System.getProperty("SERVER_ADMIN");
         }
         // from system environment
-        if (server_admin == null) {
-            server_admin = System.getenv("SERVER_ADMIN");
+        if (serverAdmin == null) {
+            serverAdmin = System.getenv("SERVER_ADMIN");
         }
         //otherwise root
-        if (server_admin == null) {
-            server_admin = "root";
+        if (serverAdmin == null) {
+            serverAdmin = "root";
         }
-        return server_admin;
+        return serverAdmin;
     }
 
     public void setMailTo(String mailTo) {
@@ -130,7 +130,7 @@ public class SendMailExceptionHandler implements ExceptionMapper<Exception> {
             StringWriter writer = new StringWriter();
             ex.printStackTrace(new PrintWriter(writer));
             String trace = writer.toString();
-            int line2 = trace.indexOf("\n");
+            int line2 = trace.indexOf('\n');
             mailMsg = "To: " + mailTo + "\n" //From header sendmail should generate
                     + "Subject: " + mailSubject + " " + threadid + "\n"
                     + "Content-Type: " + MediaType.TEXT_PLAIN + "; charset=UTF-8\n\n"

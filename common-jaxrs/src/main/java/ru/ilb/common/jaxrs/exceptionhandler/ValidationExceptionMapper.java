@@ -20,7 +20,6 @@ package ru.ilb.common.jaxrs.exceptionhandler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -28,7 +27,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.validation.ResponseConstraintViolationException;
@@ -50,7 +48,7 @@ public class ValidationExceptionMapper implements ExceptionMapper< ValidationExc
             for (final ConstraintViolation< ? > violation: constraint.getConstraintViolations()) {
                 String message = getMessage(violation);
                 if (responseBody != null) {
-                    responseBody.append(message).append("\n");
+                    responseBody.append(message).append('\n');
                 }
                 LOG.log(Level.WARNING, message);
             }

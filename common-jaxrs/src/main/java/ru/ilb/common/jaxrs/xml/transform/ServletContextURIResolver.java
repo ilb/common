@@ -37,14 +37,14 @@ public class ServletContextURIResolver implements URIResolver {
         try {
             if (string1 != null) {
                 url = new URL(new URL(string1), string);
-            }else{
+            } else {
                 url = new URL(string);
             }
             Source source = new StreamSource(url.openStream());
             source.setSystemId(url.toExternalForm());
             return source;
         } catch (Throwable ex) {
-            LOG.log(Level.SEVERE,"URIResolver exception",ex);
+            LOG.log(Level.SEVERE, "URIResolver exception", ex);
             throw new RuntimeException(ex);
         }
 

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class DateXmlAdapter extends XmlAdapter<String, Date> {
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public Date unmarshal(String value) {
@@ -38,7 +38,7 @@ public class DateXmlAdapter extends XmlAdapter<String, Date> {
         if (value == null) {
             return null;
         }
-        return DATE_FORMAT.format(value);
+        return dateFormat.format(value);
     }
 
 }

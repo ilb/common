@@ -41,16 +41,16 @@ import ru.ilb.common.jaxb.util.JaxbUtil;
 @Provider
 public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplicationException> {
 
+    private static final Logger LOG = Logger.getLogger(WebApplicationExceptionHandler.class.getName());
+    private static final String KEY_EXCHANGE_ID = "exchangeId";
+    private static final String UNCLASSIFIABLE_SERVER_ERROR_TEXT = "Unclassifiable server error";
+    private static final int CLIENT_HTTP_ERROR = 450;
+    private static final int CASCADE_HTTP_ERROR = 555;
+
     @Context
     private ContextResolver<JAXBContext> jaxbContextResolver;
 
-    private static final Logger LOG = Logger.getLogger(WebApplicationExceptionHandler.class.getName());
 
-    private final String UNCLASSIFIABLE_SERVER_ERROR_TEXT = "Unclassifiable server error";
-    private final int CLIENT_HTTP_ERROR = 450;
-    private final int CASCADE_HTTP_ERROR = 555;
-
-    private static final String KEY_EXCHANGE_ID = "exchangeId";
 
     @Override
     public Response toResponse(WebApplicationException ex) {
@@ -124,7 +124,7 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
             message.append("\nExchange Id: ").append(exchangeId);
         }
         if (logstr.length() != 0) {
-            logstr.append("\n");
+            logstr.append('\n');
         }
         logstr.append(message);
 

@@ -15,13 +15,14 @@
  */
 package ru.ilb.common.jpa.history;
 
+import org.eclipse.persistence.config.DescriptorCustomizer;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.history.HistoryPolicy;
-import org.eclipse.persistence.config.DescriptorCustomizer;
 
 /**
  * Configure history on descriptor. See also HistorySessionCustomizer
  * Usage: annotate entity with
+ *
  * @Customizer(ru.ilb.common.jpa.history.HistoryCustomizer.class)
  * @author slavb
  */

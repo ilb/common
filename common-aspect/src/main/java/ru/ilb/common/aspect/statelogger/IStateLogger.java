@@ -17,11 +17,16 @@ package ru.ilb.common.aspect.statelogger;
 
 /**
  * Интерфейс для последующих классов
+ *
  * @author shadrin_nv
  */
 public interface IStateLogger {
-    public void start();
-    public void working(Long errorCode, String msg);
-    public void end();
-    public void controller(String controller);
+
+    void start();
+
+    void working(Long errorCode, String msg);
+
+    void end();
+
+    void controller(String controller);
 }

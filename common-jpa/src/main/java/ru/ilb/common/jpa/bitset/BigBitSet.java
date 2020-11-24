@@ -53,31 +53,6 @@ public class BigBitSet<T> implements Serializable {
 
     private final BitAccessor accessor;
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 29 * hash + Objects.hashCode(this.bitSet);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final BigBitSet<?> other = (BigBitSet<?>) obj;
-        if (!Objects.equals(this.bitSet, other.bitSet)) {
-            return false;
-        }
-        return true;
-    }
-
     public BigBitSet() {
         Class<T> clazz = getParamClass(0);
 
@@ -116,6 +91,28 @@ public class BigBitSet<T> implements Serializable {
     public BigBitSet(BitAccessor accessor, Collection<T> items) {
         this.accessor = accessor;
         addAll(items);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + Objects.hashCode(this.bitSet);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BigBitSet<?> other = (BigBitSet<?>) obj;
+        return Objects.equals(this.bitSet, other.bitSet);
     }
 
     /**
@@ -193,7 +190,7 @@ public class BigBitSet<T> implements Serializable {
         bitSet.set(bitNum, value);
     }
 
-    final public void addAll(Collection<T> items) {
+    public final void addAll(Collection<T> items) {
         items.forEach(this::add);
     }
 
@@ -208,7 +205,7 @@ public class BigBitSet<T> implements Serializable {
      */
     public List<Integer> getSetBits() {
         //List<Integer> res = new ArrayList<>();
-        List<Integer> res = (bitSet != null ? bitSet.stream().boxed().collect(Collectors.toList()) : new ArrayList<>());
+        List<Integer> res = bitSet != null ? bitSet.stream().boxed().collect(Collectors.toList()) : new ArrayList<>();
         return res;
         //return res;
     }

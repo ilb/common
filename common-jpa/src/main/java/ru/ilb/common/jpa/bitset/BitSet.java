@@ -18,16 +18,16 @@ import java.util.Objects;
  * To use, need to define class, extending BitSet:
  * public class CreateOptionsSet extends BitSet&lt;CreateOptions> {
  *
- *     public CreateOptionsSet() {
- *     }
+ * public CreateOptionsSet() {
+ * }
  *
- *     public CreateOptionsSet(Long value) {
- *         super(value);
- *     }
+ * public CreateOptionsSet(Long value) {
+ * super(value);
+ * }
  *
- *     public CreateOptionsSet(Collection&lt;CreateOptions> items) {
- *         super(items);
- *     }
+ * public CreateOptionsSet(Collection&lt;CreateOptions> items) {
+ * super(items);
+ * }
  * }
  * define AttributeConverter and include in persistance.xml:
  * <pre>
@@ -48,6 +48,7 @@ import java.util.Objects;
  * }
  * }
  * </pre>
+ *
  * @author slavb
  * @param <T> stored object type
  */
@@ -92,10 +93,7 @@ public class BitSet<T> implements Serializable {
             return false;
         }
         final BitSet<?> other = (BitSet<?>) obj;
-        if (!Objects.equals(this.value, other.value)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.value, other.value);
     }
 
     /**
@@ -128,13 +126,12 @@ public class BitSet<T> implements Serializable {
 //        //TODO
 //        return res;
 //    }
-
     public void add(T item) {
         setBit(accessor.getBitNum(item));
     }
 
-    final public void addAll(Collection<T> items) {
-        items.forEach((item) -> {
+    public final void addAll(Collection<T> items) {
+        items.forEach(item -> {
             setBit(accessor.getBitNum(item));
         });
     }

@@ -5,7 +5,6 @@ import java.util.Map;
 import org.eclipse.persistence.logging.AbstractSessionLog;
 import org.eclipse.persistence.logging.SessionLog;
 import org.eclipse.persistence.logging.SessionLogEntry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -51,7 +50,7 @@ import ru.ilb.common.jpa.logging.Slf4jSessionLogger.LogLevel;
  * <li>ALL,FINER,FINEST -> TRACE
  * <li>FINE -> DEBUG
  * <li>CONFIG,INFO -> INFO
- * <li>WARNING -> WARN
+ * <li>W'ARNING -> WARN
  * <li>SEVERE -> ERROR
  * </ul>
  * </p>

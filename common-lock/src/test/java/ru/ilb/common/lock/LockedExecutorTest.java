@@ -28,7 +28,7 @@ public class LockedExecutorTest {
 
     private static final StampedLockFactory<String> LOCK_FACTORY = new StampedLockFactory<>();
 
-    private int testvar = 0;
+    private int testvar;
 
     public LockedExecutorTest() {
     }

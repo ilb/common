@@ -37,7 +37,7 @@ import ru.ilb.common.jaxb.util.JaxbUtil;
  */
 public abstract class Jndi {
 
-    protected JAXBContext jaxbContext;
+    private JAXBContext jaxbContext;
 
     private WebAppType webApp;
 
@@ -51,9 +51,9 @@ public abstract class Jndi {
     /**
      * Наименования переменных, которых не следует считывать с web.xml
      */
-    protected List<String> excludeNames = new ArrayList<>();
+    private List<String> excludeNames = new ArrayList<>();
 
-    public final WebAppType getWebApp(){
+    public final WebAppType getWebApp() {
         if (webApp != null) {
             return webApp;
         }
@@ -98,7 +98,7 @@ public abstract class Jndi {
                         name = ((ResourceEnvRefType) el.getValue()).getResourceEnvRefName().getValue();
                         value = getResourceEnvRefValue((ResourceEnvRefType) el.getValue());
                     }
-                    if (name != null && !excludeNames.contains(name)){
+                    if (name != null && !excludeNames.contains(name)) {
                         params.put(name, value);
                     }
                 });
@@ -106,7 +106,7 @@ public abstract class Jndi {
     }
 
     protected Object getEnvEntryValue(EnvEntryType envEntryType) {
-        switch (envEntryType.getEnvEntryType().getValue()){
+        switch (envEntryType.getEnvEntryType().getValue()) {
             case "java.lang.Boolean":
                 return Boolean.valueOf(envEntryType.getEnvEntryValue().getValue());
             case "java.lang.Integer":

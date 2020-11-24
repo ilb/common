@@ -26,14 +26,14 @@ import org.apache.cxf.phase.Phase;
  */
 public class EncodingInInterceptor extends AbstractPhaseInterceptor<Message> {
 
-    String encoding="UTF-8";
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
+    String encoding = "UTF-8";
 
     public EncodingInInterceptor() {
         super(Phase.RECEIVE);
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     @Override

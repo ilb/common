@@ -27,7 +27,7 @@ import javax.xml.bind.DatatypeConverter;
  */
 public class DateParamConverter implements ParamConverter<Date> {
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public Date fromString(String value) {
@@ -42,7 +42,7 @@ public class DateParamConverter implements ParamConverter<Date> {
         if (value == null) {
             return null;
         }
-        return DATE_FORMAT.format(value);
+        return dateFormat.format(value);
 
     }
 }

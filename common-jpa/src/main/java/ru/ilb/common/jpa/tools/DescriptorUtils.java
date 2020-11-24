@@ -84,6 +84,7 @@ public class DescriptorUtils {
 
     /**
      * Transform list of entities to Map PrimaryKey =&gt; Entity
+     *
      * @param srcList
      * @return
      */
@@ -93,10 +94,11 @@ public class DescriptorUtils {
 
     /**
      * Get primary key value of entity
+     *
      * @param object
      * @return
      */
-    public Object getPrimaryKeyValue(Object object){
+    public Object getPrimaryKeyValue(Object object) {
         ClassDescriptor cd = entityManager.unwrap(Session.class).getDescriptor(object);
         String pk = cd.getPrimaryKeyFields().iterator().next().getName().toLowerCase(); //FIXME
         return new BeanWrapperImpl(object).getPropertyValue(pk);
@@ -104,6 +106,7 @@ public class DescriptorUtils {
 
     /**
      * Copy src to dst filtered by DatabaseMapping types
+     *
      * @param srcObject
      * @param dstObject
      * @param copyMappingTypes
@@ -122,14 +125,16 @@ public class DescriptorUtils {
         }
         for (java.beans.PropertyDescriptor pd : pdsSrc) {
             DatabaseMapping dm = cd.getMappingForAttributeName(pd.getName());
-            if (dm != null) {
-                if (copyMappingTypes == null || copyMappingTypes.length == 0||  Stream.of(copyMappingTypes).anyMatch(mt -> mt.isAssignableFrom(dm.getClass()))) {
-                    Object srcValue = src.getPropertyValue(pd.getName());
-                    LOG.trace("copy {}", pd.getName());
-                    dst.setPropertyValue(pd.getName(), srcValue);;
-                }
+            if (dm != null && shouldCopyProperty(dm.getClass(), copyMappingTypes)) {
+                Object srcValue = src.getPropertyValue(pd.getName());
+                LOG.trace("copy {}", pd.getName());
+                dst.setPropertyValue(pd.getName(), srcValue);
             }
         }
+    }
+
+    private boolean shouldCopyProperty(Class type, Class<? extends DatabaseMapping>[] copyMappingTypes) {
+        return copyMappingTypes == null || copyMappingTypes.length == 0 || Stream.of(copyMappingTypes).anyMatch(mt -> mt.isAssignableFrom(type));
     }
 
 }
