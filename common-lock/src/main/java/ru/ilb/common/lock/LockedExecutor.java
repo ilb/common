@@ -73,13 +73,13 @@ public class LockedExecutor {
     }
 
     @FunctionalInterface
-    interface Checker {
+    public interface Checker {
 
         boolean valid() throws Exception;
     }
 
     @FunctionalInterface
-    interface Builder {
+    public interface Builder {
 
         void run() throws Exception;
     }
