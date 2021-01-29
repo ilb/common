@@ -24,6 +24,14 @@ import org.eclipse.persistence.mappings.DirectCollectionMapping;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.sessions.Session;
 
+/**
+ *
+ * Setup:
+ * 1. add to orm.xml
+ * &lt;converter name="uuid" class="ru.ilb.common.jpa.converters.UUIDConverterUniversal"/>
+ * 2. Annotate field with @org.eclipse.persistence.annotations.Convert("uuid")
+ * @author slavb
+ */
 public class UUIDConverterUniversal implements Converter {
 
     private Boolean isUUIDasByteArray = true;

@@ -3,6 +3,9 @@ Various jaxrs support classes: XmlAdapters, ParamConverterProviders for core jav
 
 ## Changelog
 
+### common-1.36
+added UUIDConverterUniversal (multi-database uuid converter)
+
 ### common-1.35
 added common-lock module with ReadWriteLockFactory and StampedLockFactory, LockedExecutor
 
