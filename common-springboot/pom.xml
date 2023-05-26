@@ -9,7 +9,7 @@
     <artifactId>common-springboot</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <spring.boot.version>2.1.9.RELEASE</spring.boot.version>
+        <spring.boot.version>2.5.15</spring.boot.version>
     </properties>
     <dependencies>
         <dependency>
